@@ -37,4 +37,10 @@ The dashboard is structured to meet the needs of three distinct strategic roles:
 - `README.md`: Project overview and technical documentation.
 
 ## ✍️ Authors
-*Developed by a group of 6 students at ESPRIT (2025-2026)*
+*Developed by a group of 6 students at ESPRIT (2025-2026) : *
+*Heni Ridene*
+*Mohamed Sbissi*
+*Sirine Ben Chouikha*
+*Mohamed Amjed Chemchik*
+*Emna Baya Ben Romdhane*
+*Hammami Eya*
