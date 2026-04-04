@@ -1,0 +1,70 @@
+2026-04-04 10:18:58,797 [INFO] >>> STEP: Data Loader
+2026-04-04 10:18:58,798 [INFO] === DATA LOADER v1 — Actor 2 Mobilités ===
+2026-04-04 10:18:58,807 [INFO] Loaded facts → shape: (4389, 19)
+2026-04-04 10:18:58,859 [INFO] Loaded dim_temps → shape: (35063, 10)
+2026-04-04 10:18:58,871 [INFO] After fact ⊕ dim_temps merge → shape: (4389, 28)
+2026-04-04 10:18:58,876 [INFO] annule: pos=78 (1.78%)  neg=4311  total=4389
+2026-04-04 10:18:58,879 [INFO] Null counts after load:
+stress_1_5    131
+2026-04-04 10:18:58,879 [INFO] Final clean shape: (4389, 19)
+2026-04-04 10:18:58,880 [INFO]     ✅ Data Loader — 0.1s
+2026-04-04 10:18:58,886 [INFO] >>> STEP: Feature Engineering
+2026-04-04 10:18:58,886 [INFO] === FEATURE ENGINEERING v1 — Actor 2 Mobilités ===
+2026-04-04 10:18:58,894 [INFO] Imputed 'stress_1_5': 131 → 0 nulls
+2026-04-04 10:18:58,901 [INFO] Class imbalance: pos=78 neg=4311 → scale_pos_weight=55.27
+2026-04-04 10:18:58,925 [INFO] Feature engineering complete. df_ml: (4389, 27)  df_ts: (4388, 3)
+2026-04-04 10:18:58,926 [INFO]     ✅ Feature Engineering — 0.0s
+2026-04-04 10:19:06,514 [INFO] >>> STEP: Regression (Passenger Load)
+2026-04-04 10:19:06,514 [INFO] === REGRESSION — Passenger Load (charge_estimee) ===
+2026-04-04 10:19:06,516 [INFO] Regression set: 4389 rows after dropping NaN (0 dropped)
+2026-04-04 10:19:06,520 [INFO] Split: train=3511  test=878
+2026-04-04 10:19:06,520 [INFO] 5-Fold CV on training set...
+2026-04-04 10:19:08,871 [INFO] CV RMSE: 21.67 ± 0.97
+2026-04-04 10:19:09,020 [INFO] [TEST] RMSE=20.29  MAE=16.19  R²=-0.1115
+2026-04-04 10:19:09,028 [INFO] Model saved → outputs/xgboost_charge.pkl
+2026-04-04 10:19:09,418 [INFO] Plots saved → outputs/
+2026-04-04 10:19:09,419 [INFO]     ✅ Regression (Passenger Load) — 2.9s
+2026-04-04 10:19:09,429 [INFO] >>> STEP: Classification (Cancellation)
+2026-04-04 10:19:09,429 [INFO] === CLASSIFICATION — Trip Cancellation Risk ===
+2026-04-04 10:19:09,431 [INFO] Classification set: 4389 rows
+2026-04-04 10:19:09,434 [INFO] Split: train=3511 test=878
+2026-04-04 10:19:09,435 [INFO] scale_pos_weight = 55.63  (pos=62 neg=3449)
+2026-04-04 10:19:09,599 [ERROR]     ❌ Classification (Cancellation) FAILED (0.2s): `best_iteration` is only defined when early stopping is used.
+2026-04-04 10:19:09,644 [INFO] >>> STEP: Prophet Congestion Forecast
+2026-04-04 10:19:09,645 [INFO] === PROPHET — Daily Congestion Forecast ===
+2026-04-04 10:19:09,820 [ERROR] Importing plotly failed. Interactive plots will not work.
+2026-04-04 10:19:09,839 [INFO] Fitting Prophet for 10 zones  (horizon=30 days)...
+2026-04-04 10:19:09,844 [INFO]   → Zone 1  (475 daily points)
+2026-04-04 10:19:11,657 [INFO]     Best changepoint_scale=0.1  holdout MAE=1.8633
+2026-04-04 10:19:11,942 [INFO]   → Zone 2  (430 daily points)
+2026-04-04 10:19:12,879 [INFO]     Best changepoint_scale=0.3  holdout MAE=0.8417
+2026-04-04 10:19:13,194 [INFO]   → Zone 3  (477 daily points)
+2026-04-04 10:19:14,113 [INFO]     Best changepoint_scale=0.3  holdout MAE=0.7025
+2026-04-04 10:19:14,398 [INFO]   → Zone 4  (414 daily points)
+2026-04-04 10:19:15,338 [INFO]     Best changepoint_scale=0.3  holdout MAE=0.9568
+2026-04-04 10:19:15,652 [INFO]   → Zone 5  (444 daily points)
+2026-04-04 10:19:16,497 [INFO]     Best changepoint_scale=0.1  holdout MAE=0.6971
+2026-04-04 10:19:16,780 [INFO]   → Zone 6  (467 daily points)
+2026-04-04 10:19:17,680 [INFO]     Best changepoint_scale=0.05  holdout MAE=0.7900
+2026-04-04 10:19:17,975 [INFO]   → Zone 7  (419 daily points)
+2026-04-04 10:19:18,863 [INFO]     Best changepoint_scale=0.1  holdout MAE=0.8053
+2026-04-04 10:19:19,164 [INFO]   → Zone 8  (415 daily points)
+2026-04-04 10:19:20,052 [INFO]     Best changepoint_scale=0.05  holdout MAE=0.9780
+2026-04-04 10:19:20,409 [INFO]   → Zone 9  (399 daily points)
+2026-04-04 10:19:21,380 [INFO]     Best changepoint_scale=0.3  holdout MAE=0.7840
+2026-04-04 10:19:21,782 [INFO]   → Zone 10  (448 daily points)
+2026-04-04 10:19:22,689 [INFO]     Best changepoint_scale=0.1  holdout MAE=0.6565
+2026-04-04 10:19:23,024 [INFO] Saved 4688 rows to outputs/forecast_congestion.csv (189 future rows)
+2026-04-04 10:19:23,024 [INFO] Mean holdout MAE across zones: 0.9075
+2026-04-04 10:19:23,025 [INFO]     ✅ Prophet Congestion Forecast — 13.4s
+2026-04-04 10:19:23,029 [INFO] >>> STEP: Evaluation
+2026-04-04 10:19:23,029 [INFO] Starting central evaluation for Actor 2...
+2026-04-04 10:19:23,049 [INFO] [Regression] RMSE=20.29  MAE=16.19  R²=-0.1115
+2026-04-04 10:19:23,049 [ERROR] Classification evaluation failed: [Errno 2] No such file or directory: 'outputs/xgboost_cancellation.pkl'
+2026-04-04 10:19:23,071 [INFO] [Prophet] 10 zones, 4688 forecast rows
+2026-04-04 10:19:23,072 [INFO] [KPI] Taux de Ponctualité = 98.2228%  (78/4389 cancelled)
+2026-04-04 10:19:23,073 [INFO] Evaluation complete. Report saved → outputs/metrics_report.json
+2026-04-04 10:19:23,074 [INFO]     ✅ Evaluation — 0.0s
+2026-04-04 10:19:23,079 [INFO] >>> STEP: Export Predictions
+2026-04-04 10:19:23,079 [INFO] === EXPORT PREDICTIONS — Actor 2 ===
+2026-04-04 10:19:23,088 [ERROR]     ❌ Export Predictions FAILED (0.0s): [Errno 2] No such file or directory: 'outputs/xgboost_cancellation.pkl'
