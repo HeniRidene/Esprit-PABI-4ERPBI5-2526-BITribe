@@ -1,0 +1,28 @@
+{
+    "metadata": {
+        "actor": "Actor 2 — Directeur Mobilités",
+        "execution_date": "2026-04-04 09:19:23 UTC",
+        "overall_status": "❌ SOME FAILED"
+    },
+    "regression_charge": {
+        "target": "charge_estimee (passenger load factor)",
+        "test_rows": 878,
+        "rmse": 20.2875,
+        "mae": 16.1912,
+        "r2": -0.1115
+    },
+    "classification_annule": {
+        "error": "[Errno 2] No such file or directory: 'outputs/xgboost_cancellation.pkl'"
+    },
+    "timeseries_congestion": {
+        "model": "Prophet (daily congestion per zone)",
+        "zones": 10,
+        "rows": 4688,
+        "note": "Holdout MAE per zone stored in classification_report.json"
+    },
+    "kpi": {
+        "taux_ponctualite_pct": 98.2228,
+        "total_trips": 4389,
+        "cancelled_trips": 78
+    }
+}
