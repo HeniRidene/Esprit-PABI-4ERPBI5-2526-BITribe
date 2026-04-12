@@ -1,0 +1,97 @@
+{
+    "metadata": {
+        "actor": "Actor 3 — Responsable Sécurité",
+        "execution_date": "2026-04-04 10:48:12 UTC",
+        "overall_status": "✅ ALL PASSED"
+    },
+    "classification_severity": {
+        "model": "RandomForestClassifier — Accident Severity",
+        "n_classes": 2,
+        "class_merge_note": "Classes 1+2 merged (mortel+grave → serious) because nb_mortels=0 in all rows. Binary classification: 0=Aucun incident, 1=Accident grave/mortel.",
+        "cv_f1_macro": 1.0,
+        "cv_f1_std": 0.0,
+        "test_fold": {
+            "f1_macro": 1.0,
+            "f1_weighted": 1.0,
+            "auc_roc": 1.0,
+            "confusion_matrix": [
+                [
+                    376,
+                    0
+                ],
+                [
+                    0,
+                    6
+                ]
+            ]
+        },
+        "class_distribution": {
+            "0": 1883,
+            "1": 28
+        }
+    },
+    "clustering_zones": {
+        "k": 3,
+        "n_zones": 10,
+        "silhouette": 0.2419,
+        "assignments": [
+            {
+                "zone_sk": 1,
+                "risk_level": "Medium risk"
+            },
+            {
+                "zone_sk": 2,
+                "risk_level": "Low risk"
+            },
+            {
+                "zone_sk": 3,
+                "risk_level": "High risk"
+            },
+            {
+                "zone_sk": 4,
+                "risk_level": "Medium risk"
+            },
+            {
+                "zone_sk": 5,
+                "risk_level": "Low risk"
+            },
+            {
+                "zone_sk": 6,
+                "risk_level": "Low risk"
+            },
+            {
+                "zone_sk": 7,
+                "risk_level": "Medium risk"
+            },
+            {
+                "zone_sk": 8,
+                "risk_level": "Low risk"
+            },
+            {
+                "zone_sk": 9,
+                "risk_level": "High risk"
+            },
+            {
+                "zone_sk": 10,
+                "risk_level": "High risk"
+            }
+        ]
+    },
+    "anomaly_detection": {
+        "model": "IsolationForest (contamination=5%)",
+        "total_rows": 1911,
+        "n_anomalies": 96,
+        "anomaly_rate_pct": 5.02,
+        "precision_at_k_note": "Precision@k validated by domain heuristic (summer months + high-accident zones). See classification_report.json."
+    },
+    "kpis": {
+        "densite_accidents": 19.9,
+        "indice_de_gravite": 0.1407,
+        "n_zones": 10,
+        "total_rows": 1911,
+        "total_accidents": 199,
+        "total_graves": 28,
+        "total_mortels": 0,
+        "total_crimes": 49980
+    }
+}
