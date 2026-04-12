@@ -1,0 +1,12 @@
+Shape: (4389, 19)
+
+Columns:
+['fact_mob_sk', 'time_sk', 'zone_sk', 'line_sk', 'mode_sk', 'event_sk', 'stop_sk', 'weather_sk', 'annule', 'charge_estimee', 'vitesse_kmh', 'temps_trajet_min', 'congestion_index', 'stress_1_5', 'satisfaction_1_5', 'bak_vitesse_kmh', 'bak_temps_trajet_min', 'bak_stress_1_5', 'bak_weather_sk']
+
+Nulls:
+{'fact_mob_sk': 0, 'time_sk': 0, 'zone_sk': 0, 'line_sk': 0, 'mode_sk': 0, 'event_sk': 4328, 'stop_sk': 0, 'weather_sk': 4169, 'annule': 0, 'charge_estimee': 0, 'vitesse_kmh': 0, 'temps_trajet_min': 0, 'congestion_index': 0, 'stress_1_5': 131, 'satisfaction_1_5': 0, 'bak_vitesse_kmh': 0, 'bak_temps_trajet_min': 0, 'bak_stress_1_5': 0, 'bak_weather_sk': 0}
+
+annule value_counts:
+{0: np.int64(4311), 1: np.int64(78)}
+
+charge_estimee: min=0.00 max=126.00 mean=45.06
