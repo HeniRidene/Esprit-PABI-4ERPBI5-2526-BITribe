@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrbanMobility BI - Sustainability &amp; Emissions Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#e5eeff",
+                        "surface": "#f8f9ff",
+                        "secondary-fixed-dim": "#59dbbf",
+                        "primary-fixed": "#e1e0ff",
+                        "on-tertiary-container": "#ad7c00",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#79f8da",
+                        "on-surface-variant": "#464651",
+                        "outline-variant": "#c7c5d3",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#797dd1",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#bfc1ff",
+                        "error": "#ba1a1a",
+                        "tertiary": "#030200",
+                        "on-surface": "#0b1c30",
+                        "on-primary-fixed": "#080962",
+                        "on-secondary-container": "#00725f",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#005143",
+                        "on-background": "#0b1c30",
+                        "on-primary": "#ffffff",
+                        "primary": "#000018",
+                        "background": "#f8f9ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "outline": "#777682",
+                        "on-secondary-fixed": "#00201a",
+                        "on-primary-fixed-variant": "#3a3e8d",
+                        "primary-fixed-dim": "#bfc1ff",
+                        "inverse-surface": "#213145",
+                        "primary-container": "#0a0b63",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed-dim": "#ffba20",
+                        "tertiary-fixed": "#ffdea8",
+                        "surface-variant": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container-high": "#dce9ff",
+                        "secondary-container": "#79f8da",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5e4200",
+                        "surface-tint": "#5256a7",
+                        "on-tertiary-fixed": "#271900",
+                        "tertiary-container": "#281a00",
+                        "secondary": "#006b5a",
+                        "surface-container-low": "#eff4ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "32px",
+                        "xl": "48px",
+                        "sm": "16px",
+                        "md": "24px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "lg": "32px",
+                        "gutter": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "metric-trend": ["Inter"],
+                        "display-kpi": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "metric-trend": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display-kpi": ["36px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md overflow-x-hidden min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="bg-slate-50 dark:bg-slate-900 text-blue-900 dark:text-blue-400 font-['Inter'] text-sm font-medium fixed left-0 top-0 h-screen w-[280px] border-r border-r border-slate-200 dark:border-slate-800 flat no shadows flex flex-col h-full p-4 space-y-2 z-50">
+<div class="mb-lg px-sm">
+<h2 class="font-black uppercase tracking-widest text-xs text-slate-400">Network Control</h2>
+<p class="text-on-surface-variant font-label-caps text-label-caps mt-xs">Global Infrastructure</p>
+</div>
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center gap-3 bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-300 rounded-lg shadow-sm px-4 py-3 border-l-4 border-blue-700 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span>Territory Overview</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:translate-x-1 transition-transform hover:bg-blue-50/50 dark:hover:bg-blue-900/20 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span>Time Analysis</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:translate-x-1 transition-transform hover:bg-blue-50/50 dark:hover:bg-blue-900/20 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+<span>Analytical Layers</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:translate-x-1 transition-transform hover:bg-blue-50/50 dark:hover:bg-blue-900/20 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Census Data</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps py-sm rounded-lg mb-sm hover:opacity-90 transition-opacity ease-in-out duration-150">
+                Apply Filters
+            </button>
+<div class="space-y-xs">
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:translate-x-1 transition-transform hover:bg-blue-50/50 dark:hover:bg-blue-900/20 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Documentation</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:translate-x-1 transition-transform hover:bg-blue-50/50 dark:hover:bg-blue-900/20 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-[280px] flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-white/90 dark:bg-slate-950/90 backdrop-blur-md text-blue-900 dark:text-blue-400 font-['Inter'] antialiased tracking-tight docked full-width top-0 sticky z-40 border-b border-slate-200 dark:border-slate-800 shadow-sm flex justify-between items-center w-full px-6 py-3">
+<div class="flex items-center gap-md">
+<h1 class="text-lg font-bold tracking-tighter text-blue-900 dark:text-blue-100">UrbanMobility BI</h1>
+<nav class="hidden md:flex gap-md ml-lg">
+<!-- Nav items would go here if defined in JSON, defaulting to empty as per provided structure -->
+</nav>
+</div>
+<div class="flex items-center gap-sm">
+<!-- Search on left of actions as per JSON -->
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container rounded-full text-body-md font-body-md border-none focus:ring-2 focus:ring-primary-container outline-none w-64 text-on-surface" placeholder="Search..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:text-blue-900 dark:hover:text-blue-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors duration-200 rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:text-blue-900 dark:hover:text-blue-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors duration-200 rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden ml-sm cursor-pointer border-2 border-surface">
+<!-- Profile Image Placeholder -->
+<div class="w-full h-full bg-primary-fixed-dim flex items-center justify-center text-on-primary-fixed font-headline-sm text-headline-sm">
+                        EU
+                    </div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-margin-page bg-surface flex flex-col gap-md">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-sm">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-base">Sustainability &amp; Emissions Analytics</h2>
+<p class="text-on-surface-variant font-body-md text-body-md">Real-time environmental impact tracking across urban transport networks.</p>
+</div>
+<div class="flex gap-sm">
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-caps text-label-caps flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                        LIVE DATA
+                    </span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface rounded-full font-label-caps text-label-caps flex items-center gap-2">
+                        Q3 2024
+                    </span>
+</div>
+</div>
+<!-- Top Row KPIs -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<span class="text-on-surface-variant font-label-caps text-label-caps uppercase">Total CO2 Reduction</span>
+<span class="material-symbols-outlined text-secondary" data-icon="eco">eco</span>
+</div>
+<div class="flex items-end justify-between">
+<span class="font-display-kpi text-display-kpi text-on-surface">42.5<span class="text-headline-sm font-headline-sm text-outline ml-1">kT</span></span>
+<div class="flex items-center text-secondary font-metric-trend text-metric-trend gap-1 bg-secondary-container/30 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_down">trending_down</span>
+                            12%
+                        </div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<span class="text-on-surface-variant font-label-caps text-label-caps uppercase">Fleet Electrification</span>
+<span class="material-symbols-outlined text-primary-container" data-icon="electric_car">electric_car</span>
+</div>
+<div class="flex items-end justify-between">
+<span class="font-display-kpi text-display-kpi text-on-surface">68<span class="text-headline-sm font-headline-sm text-outline ml-1">%</span></span>
+<div class="flex items-center text-secondary font-metric-trend text-metric-trend gap-1 bg-secondary-container/30 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_up">trending_up</span>
+                            5%
+                        </div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<span class="text-on-surface-variant font-label-caps text-label-caps uppercase">Energy Efficiency Index</span>
+<span class="material-symbols-outlined text-primary-container" data-icon="bolt">bolt</span>
+</div>
+<div class="flex items-end justify-between">
+<span class="font-display-kpi text-display-kpi text-on-surface">92.4</span>
+<div class="flex items-center text-outline font-metric-trend text-metric-trend gap-1 bg-surface-container px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px]" data-icon="horizontal_rule">horizontal_rule</span>
+                            0%
+                        </div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<span class="text-on-surface-variant font-label-caps text-label-caps uppercase">Active Green Projects</span>
+<span class="material-symbols-outlined text-secondary" data-icon="park">park</span>
+</div>
+<div class="flex items-end justify-between">
+<span class="font-display-kpi text-display-kpi text-on-surface">14</span>
+<div class="flex items-center text-secondary font-metric-trend text-metric-trend gap-1 bg-secondary-container/30 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px]" data-icon="add">add</span>
+                            2 New
+                        </div>
+</div>
+</div>
+</div>
+<!-- Main Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mt-sm">
+<!-- Carbon Emissions Trend (Spans 2 cols) -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Carbon Emissions Trend</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-surface-container rounded text-label-caps font-label-caps text-on-surface-variant hover:bg-surface-container-high transition-colors">1M</button>
+<button class="px-3 py-1 bg-primary-container text-on-primary-container rounded text-label-caps font-label-caps transition-colors">YTD</button>
+<button class="px-3 py-1 bg-surface-container rounded text-label-caps font-label-caps text-on-surface-variant hover:bg-surface-container-high transition-colors">ALL</button>
+</div>
+</div>
+<!-- Chart Placeholder Layout -->
+<div class="flex-1 relative min-h-[300px] border-b border-l border-outline-variant/30 pb-4 pl-4 flex flex-col">
+<!-- Y Axis labels -->
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-label-caps font-label-caps text-outline-variant -translate-x-8">
+<span>100</span>
+<span>75</span>
+<span>50</span>
+<span>25</span>
+<span>0</span>
+</div>
+<!-- Grid Lines -->
+<div class="flex-1 flex flex-col justify-between w-full opacity-10 pointer-events-none">
+<div class="border-t border-outline-variant w-full h-0"></div>
+<div class="border-t border-outline-variant w-full h-0"></div>
+<div class="border-t border-outline-variant w-full h-0"></div>
+<div class="border-t border-outline-variant w-full h-0"></div>
+<div class="border-t border-outline-variant w-full h-0"></div>
+</div>
+<!-- Sparkline Line Area (CSS Gradient representation) -->
+<div class="absolute bottom-4 left-4 right-0 top-0 overflow-hidden">
+<div class="w-full h-full bg-gradient-to-t from-secondary-container/20 to-transparent relative">
+<!-- SVG Line Path representation -->
+<svg class="w-full h-full absolute inset-0" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M0,80 L10,75 L20,85 L30,60 L40,65 L50,40 L60,45 L70,20 L80,30 L90,10 L100,15" fill="none" stroke="#006b5a" stroke-width="2" vector-effect="non-scaling-stroke"></path>
+<!-- Target Line -->
+<line stroke="#777682" stroke-dasharray="4,4" stroke-width="1" vector-effect="non-scaling-stroke" x1="0" x2="100" y1="40" y2="40"></line>
+</svg>
+</div>
+</div>
+<!-- X Axis labels -->
+<div class="absolute bottom-0 left-4 right-0 flex justify-between text-label-caps font-label-caps text-outline-variant translate-y-6">
+<span>Jan</span>
+<span>Mar</span>
+<span>May</span>
+<span>Jul</span>
+<span>Sep</span>
+<span>Nov</span>
+</div>
+</div>
+</div>
+<!-- Energy Efficiency Comparison (Bento style right col) -->
+<div class="flex flex-col gap-gutter">
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-md">Energy Efficiency by Mode</h3>
+<div class="space-y-sm">
+<!-- Bus -->
+<div>
+<div class="flex justify-between text-label-caps font-label-caps mb-1">
+<span class="text-on-surface flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="directions_bus">directions_bus</span> Electric Bus</span>
+<span class="text-secondary font-bold">85 kWh/km</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<!-- Tram -->
+<div>
+<div class="flex justify-between text-label-caps font-label-caps mb-1">
+<span class="text-on-surface flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="tram">tram</span> Tram Network</span>
+<span class="text-primary-container font-bold">62 kWh/km</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary-container h-2 rounded-full" style="width: 62%"></div>
+</div>
+</div>
+<!-- Metro -->
+<div>
+<div class="flex justify-between text-label-caps font-label-caps mb-1">
+<span class="text-on-surface flex items-center gap-1"><span class="material-symbols-outlined text-[14px]" data-icon="subway">subway</span> Metro Lines</span>
+<span class="text-primary-fixed-variant font-bold">45 kWh/km</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary-fixed-variant h-2 rounded-full" style="width: 45%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Image Box (Canvas) -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_4px_20px_rgba(0,0,0,0.05)] h-48 relative">
+<img alt="Canvas Image" class="w-full h-full object-cover" data-alt="A striking digital installation art piece featuring glowing, generative geometric shapes suspended in a vast, minimalist gallery space. The room is illuminated by high-key, soft white lighting that creates a bright, modern light-mode aesthetic. The artwork relies on a sophisticated palette of deep blacks and pristine whites, punctuated by intense accents of vibrant red. The mood is serene yet technologically advanced." src="https://lh3.googleusercontent.com/aida/ADBb0uh-r76hIgIT7Y3odhn96Bv8kYGtJXVDa96WfzgcFWBy4MRnjG2jXWdLjw1mRJdGSDu7ElL12W2QstSZp8C0eIQreBhcMFhhirXTJe3NU-yKykJZYW3TOEEkeMLZYXw476RnBFa76qBlUXR00WaRssxjxB_myIje2wrJgPCfqA0VHBqngc-gS2n7P82HuVbGA0ksypktGX3WR9B3phF-43qnmHJxr-ssr-j3yQd-1rFfPivIfqw5EQaG_YlnNlKMCCUXbTpMgBBasdY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-md">
+<h4 class="text-on-primary font-headline-sm text-headline-sm mb-1">Infrastructure Scan</h4>
+<p class="text-primary-fixed font-label-caps text-label-caps">Sector 4 Analysis Active</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Row: Greening Projects & Data Table -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mt-sm mb-xl">
+<!-- Greening Projects Breakdown (Treemap/Budget Block style) -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-md">Greening Projects Distribution</h3>
+<div class="flex-1 grid grid-cols-2 grid-rows-3 gap-2 min-h-[250px]">
+<div class="col-span-2 row-span-2 bg-secondary/90 text-on-secondary p-sm rounded-lg flex flex-col justify-between hover:bg-secondary transition-colors cursor-pointer shadow-sm">
+<span class="font-label-caps text-label-caps uppercase opacity-80">North District</span>
+<span class="font-headline-sm text-headline-sm">45%</span>
+</div>
+<div class="bg-primary-container text-on-primary p-sm rounded-lg flex flex-col justify-between hover:bg-primary-fixed-variant transition-colors cursor-pointer shadow-sm">
+<span class="font-label-caps text-label-caps uppercase opacity-80">Central Grid</span>
+<span class="font-headline-sm text-headline-sm">30%</span>
+</div>
+<div class="bg-secondary-fixed text-on-secondary-fixed p-sm rounded-lg flex flex-col justify-between hover:bg-secondary-fixed-dim transition-colors cursor-pointer shadow-sm">
+<span class="font-label-caps text-label-caps uppercase opacity-80">East Port</span>
+<span class="font-headline-sm text-headline-sm">25%</span>
+</div>
+</div>
+</div>
+<!-- Operational Table (Spans 2 cols) -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Live Sensor Network</h3>
+<button class="text-primary-fixed-variant font-label-caps text-label-caps flex items-center gap-1 hover:underline">
+                            View All <span class="material-symbols-outlined text-[14px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto flex-1">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/30 text-label-caps font-label-caps text-on-surface-variant">
+<th class="py-3 px-2 font-normal">Sensor ID</th>
+<th class="py-3 px-2 font-normal">Location</th>
+<th class="py-3 px-2 font-normal">AQI</th>
+<th class="py-3 px-2 font-normal">Status</th>
+<th class="py-3 px-2 font-normal text-right">Last Read</th>
+</tr>
+</thead>
+<tbody class="text-body-md font-body-md text-on-surface">
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-lowest/50 transition-colors">
+<td class="py-3 px-2 font-medium text-primary-fixed-variant">SN-8492</td>
+<td class="py-3 px-2">Downtown Transit Hub</td>
+<td class="py-3 px-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+                                            42 (Good)
+                                        </div>
+</td>
+<td class="py-3 px-2">
+<span class="px-2 py-1 rounded-full bg-surface-container text-on-surface text-xs font-medium">Active</span>
+</td>
+<td class="py-3 px-2 text-right text-on-surface-variant text-sm">2 mins ago</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-lowest/50 transition-colors">
+<td class="py-3 px-2 font-medium text-primary-fixed-variant">SN-8493</td>
+<td class="py-3 px-2">Industrial Park West</td>
+<td class="py-3 px-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></div>
+                                            85 (Mod)
+                                        </div>
+</td>
+<td class="py-3 px-2">
+<span class="px-2 py-1 rounded-full bg-surface-container text-on-surface text-xs font-medium">Active</span>
+</td>
+<td class="py-3 px-2 text-right text-on-surface-variant text-sm">5 mins ago</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-lowest/50 transition-colors">
+<td class="py-3 px-2 font-medium text-primary-fixed-variant">SN-8494</td>
+<td class="py-3 px-2">Northside Depot</td>
+<td class="py-3 px-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+                                            38 (Good)
+                                        </div>
+</td>
+<td class="py-3 px-2">
+<span class="px-2 py-1 rounded-full bg-error-container text-on-error-container text-xs font-medium">Maint</span>
+</td>
+<td class="py-3 px-2 text-right text-on-surface-variant text-sm">1 hr ago</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest/50 transition-colors">
+<td class="py-3 px-2 font-medium text-primary-fixed-variant">SN-8495</td>
+<td class="py-3 px-2">East Bridge Connector</td>
+<td class="py-3 px-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+                                            45 (Good)
+                                        </div>
+</td>
+<td class="py-3 px-2">
+<span class="px-2 py-1 rounded-full bg-surface-container text-on-surface text-xs font-medium">Active</span>
+</td>
+<td class="py-3 px-2 text-right text-on-surface-variant text-sm">Just now</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

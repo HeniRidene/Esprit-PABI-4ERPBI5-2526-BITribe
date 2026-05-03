@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* ── Surface System (Premium Glass/Light) ── */
+  --color-surface: #fcfdff;
+  --color-surface-dim: #eef2f8;
+  --color-surface-bright: #ffffff;
+  --color-surface-lowest: #ffffff;
+  --color-surface-low: #f5f8ff;
+  --color-surface-container: #edf3ff;
+  --color-surface-high: #e3edff;
+  --color-surface-highest: #dae7ff;
+  --color-surface-variant: #dee7ff;
+  --color-surface-tint: #4355b9;
+  --color-background: #fcfdff;
+
+  /* ── On-Surface (Deep & Sharp) ── */
+  --color-on-surface: #191c20;
+  --color-on-surface-variant: #43474e;
+  --color-on-background: #191c20;
+  --color-inverse-surface: #2e3034;
+  --color-inverse-on-surface: #f0f0f4;
+
+  /* ── Primary (Executive Navy/Indigo) ── */
+  --color-primary: #001a41;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #002d6d;
+  --color-on-primary-container: #d8e2ff;
+  --color-inverse-primary: #adc6ff;
+  --color-primary-fixed: #d8e2ff;
+  --color-primary-fixed-dim: #adc6ff;
+  --color-on-primary-fixed: #001a41;
+  --color-on-primary-fixed-variant: #284477;
+
+  /* ── Secondary (Dynamic Teal/Emerald) ── */
+  --color-secondary: #006a60;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #74f8e8;
+  --color-on-secondary-container: #00201c;
+  --color-secondary-fixed: #74f8e8;
+  --color-secondary-fixed-dim: #53dbcc;
+  --color-on-secondary-fixed: #00201c;
+  --color-on-secondary-fixed-variant: #005048;
+
+  /* ── Tertiary (Advanced Gold/Amber) ── */
+  --color-tertiary: #6b5c00;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ffe45f;
+  --color-on-tertiary-container: #211b00;
+
+  /* ── Design-System Spacing ── */
+  --spacing-ds-base: 4px;
+  --spacing-ds-xs: 8px;
+  --spacing-ds-sm: 16px;
+  --spacing-ds-md: 24px;
+  --spacing-ds-lg: 32px;
+  --spacing-ds-xl: 48px;
+}
+
+/* ── Base ── */
+body {
+  background: #fcfdff;
+  color: #191c20;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Premium Glassmorphism ── */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(0, 26, 65, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ── Animated Mesh Background ── */
+.mesh-bg {
+  background-color: #fcfdff;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(210,100%,98%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(220,100%,95%,1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(180,100%,95%,1) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(220,100%,95%,1) 0, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(190,100%,95%,1) 0, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* ── Shadows ── */
+.shadow-premium {
+  box-shadow: 0 10px 30px -10px rgba(0, 26, 65, 0.1), 0 4px 10px -5px rgba(0, 26, 65, 0.05);
+}
+
+.shadow-glow-primary {
+  box-shadow: 0 0 20px rgba(0, 45, 109, 0.15);
+}
+
+/* ── Typography ── */
+.text-display-kpi {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #284477 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-label-caps {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant);
+  opacity: 0.8;
+}
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hover-scale {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 26, 65, 0.1); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 26, 65, 0.2); }
+
+/* ── KPI Progress Bar Style ── */
+.kpi-progress {
+  height: 4px;
+  width: 100%;
+  background: var(--color-surface-container);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.kpi-progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 2px;
+}

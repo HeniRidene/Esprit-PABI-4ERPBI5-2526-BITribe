@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live Mobility Map - UrbanMobility BI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+  }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-container": "#e5eeff",
+                "surface": "#f8f9ff",
+                "secondary-fixed-dim": "#59dbbf",
+                "primary-fixed": "#e1e0ff",
+                "on-tertiary-container": "#ad7c00",
+                "error-container": "#ffdad6",
+                "secondary-fixed": "#79f8da",
+                "on-surface-variant": "#464651",
+                "outline-variant": "#c7c5d3",
+                "on-tertiary": "#ffffff",
+                "on-primary-container": "#797dd1",
+                "surface-bright": "#f8f9ff",
+                "on-secondary": "#ffffff",
+                "inverse-primary": "#bfc1ff",
+                "error": "#ba1a1a",
+                "tertiary": "#030200",
+                "on-surface": "#0b1c30",
+                "on-primary-fixed": "#080962",
+                "on-secondary-container": "#00725f",
+                "on-error-container": "#93000a",
+                "on-secondary-fixed-variant": "#005143",
+                "on-background": "#0b1c30",
+                "on-primary": "#ffffff",
+                "primary": "#000018",
+                "background": "#f8f9ff",
+                "surface-container-highest": "#d3e4fe",
+                "outline": "#777682",
+                "on-secondary-fixed": "#00201a",
+                "on-primary-fixed-variant": "#3a3e8d",
+                "primary-fixed-dim": "#bfc1ff",
+                "inverse-surface": "#213145",
+                "primary-container": "#0a0b63",
+                "inverse-on-surface": "#eaf1ff",
+                "tertiary-fixed-dim": "#ffba20",
+                "tertiary-fixed": "#ffdea8",
+                "surface-variant": "#d3e4fe",
+                "surface-dim": "#cbdbf5",
+                "surface-container-high": "#dce9ff",
+                "secondary-container": "#79f8da",
+                "on-error": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "on-tertiary-fixed-variant": "#5e4200",
+                "surface-tint": "#5256a7",
+                "on-tertiary-fixed": "#271900",
+                "tertiary-container": "#281a00",
+                "secondary": "#006b5a",
+                "surface-container-low": "#eff4ff"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-page": "32px",
+                "xl": "48px",
+                "sm": "16px",
+                "md": "24px",
+                "base": "4px",
+                "xs": "8px",
+                "lg": "32px",
+                "gutter": "20px"
+        },
+        "fontFamily": {
+                "headline-sm": [
+                        "Inter"
+                ],
+                "metric-trend": [
+                        "Inter"
+                ],
+                "display-kpi": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "label-caps": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "headline-sm": [
+                        "18px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "600"
+                        }
+                ],
+                "metric-trend": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-kpi": [
+                        "36px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-caps": [
+                        "11px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "700"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md h-screen w-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-[280px] border-r bg-slate-50 border-r border-slate-200 z-50 flex flex-col p-4 space-y-2">
+<div class="mb-8 mt-4 px-4">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Network Control</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Global Infrastructure</p>
+</div>
+<div class="flex-grow space-y-2">
+<!-- Territory Overview (Active) -->
+<a class="flex items-center gap-3 bg-white text-blue-700 rounded-lg shadow-sm px-4 py-3 border-l-4 border-blue-700" href="#">
+<span class="material-symbols-outlined" data-icon="map" data-weight="fill">map</span>
+<span class="font-label-caps text-label-caps tracking-widest uppercase">Territory Overview</span>
+</a>
+<!-- Time Analysis -->
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:translate-x-1 transition-transform hover:bg-blue-50/50 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span class="font-label-caps text-label-caps tracking-widest uppercase">Time Analysis</span>
+</a>
+<!-- Analytical Layers -->
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:translate-x-1 transition-transform hover:bg-blue-50/50 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+<span class="font-label-caps text-label-caps tracking-widest uppercase">Analytical Layers</span>
+</a>
+<!-- Census Data -->
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:translate-x-1 transition-transform hover:bg-blue-50/50 ease-in-out duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-label-caps text-label-caps tracking-widest uppercase">Census Data</span>
+</a>
+</div>
+<div class="mt-auto space-y-2 pt-4 border-t border-slate-200">
+<button class="w-full bg-primary text-on-primary font-body-md text-body-md py-2 rounded-lg hover:bg-primary-fixed-variant transition-colors mb-4 shadow-sm">Apply Filters</button>
+<!-- Documentation -->
+<a class="flex items-center gap-3 text-slate-600 px-4 py-2 hover:bg-blue-50/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help">help</span>
+<span class="font-body-md text-body-md">Documentation</span>
+</a>
+<!-- Support -->
+<a class="flex items-center gap-3 text-slate-600 px-4 py-2 hover:bg-blue-50/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="contact_support">contact_support</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col ml-[280px] h-screen relative">
+<!-- TopNavBar -->
+<header class="docked full-width top-0 sticky z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm flex justify-between items-center w-full px-6 py-3 font-['Inter'] antialiased tracking-tight">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold tracking-tighter text-blue-900">UrbanMobility BI</span>
+</div>
+<div class="flex items-center gap-6 text-blue-900">
+<button class="hover:bg-slate-50 transition-colors duration-200 cursor-pointer active:opacity-80 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-slate-50 transition-colors duration-200 cursor-pointer active:opacity-80 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-slate-300 overflow-hidden border border-slate-200">
+<!-- Placeholder for profile image -->
+</div>
+</div>
+</header>
+<!-- Map Canvas -->
+<div class="flex-1 relative w-full h-full bg-slate-100">
+<img alt="Map Background" class="w-full h-full object-cover absolute inset-0 z-0 opacity-80" data-alt="A highly detailed, modern top-down map visualization of a complex urban city grid. The map features an executive corporate aesthetic with a refined color palette dominated by deep navy blues for water bodies and light, airy grays and whites for landmasses. Subtle vibrant teal and green lines denote primary transit routes and traffic flows, adding a forward-thinking, high-tech energy. The lighting is bright and flat, characteristic of a high-end light-mode dashboard interface designed for urban planners. The overall mood is precise, authoritative, and data-dense yet visually clean." data-location="New York City" src="https://lh3.googleusercontent.com/aida/ADBb0uh-r76hIgIT7Y3odhn96Bv8kYGtJXVDa96WfzgcFWBy4MRnjG2jXWdLjw1mRJdGSDu7ElL12W2QstSZp8C0eIQreBhcMFhhirXTJe3NU-yKykJZYW3TOEEkeMLZYXw476RnBFa76qBlUXR00WaRssxjxB_myIje2wrJgPCfqA0VHBqngc-gS2n7P82HuVbGA0ksypktGX3WR9B3phF-43qnmHJxr-ssr-j3yQd-1rFfPivIfqw5EQaG_YlnNlKMCCUXbTpMgBBasdY"/>
+<!-- Overlay Gradient for better readability -->
+<div class="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent z-0 pointer-events-none"></div>
+<!-- Map Layers Control Panel (Floating Right) -->
+<div class="absolute top-md right-md z-10 bg-surface-container-lowest rounded-xl p-4 shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-outline-variant/30 w-64">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">layers</span> Map Layers
+        </h3>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="form-checkbox h-4 w-4 text-secondary rounded border-outline-variant focus:ring-secondary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Traffic Flow</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="form-checkbox h-4 w-4 text-secondary rounded border-outline-variant focus:ring-secondary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Transit Lines</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-secondary rounded border-outline-variant focus:ring-secondary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Environmental Sensors</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-secondary rounded border-outline-variant focus:ring-secondary-container" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Incidents</span>
+</label>
+</div>
+</div>
+<!-- Left Overlay Widgets -->
+<div class="absolute top-md left-md z-10 space-y-md flex flex-col w-80">
+<!-- Current City Congestion -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/20">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-2">City Congestion Index</h4>
+<div class="flex items-end justify-between mb-4">
+<span class="font-display-kpi text-display-kpi text-on-surface">68<span class="text-headline-sm font-headline-sm text-on-surface-variant">/100</span></span>
+<div class="flex items-center text-error bg-error-container/30 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span class="font-metric-trend text-metric-trend ml-1">+4.2%</span>
+</div>
+</div>
+<!-- Simplified Gauge/Bar -->
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary-container w-[40%]"></div>
+<div class="h-full bg-tertiary-fixed-dim w-[28%]"></div>
+<div class="h-full bg-surface-container-high w-[32%]"></div>
+</div>
+<div class="flex justify-between mt-2 font-label-caps text-label-caps text-on-surface-variant/70 text-[9px]">
+<span>Low</span>
+<span>Moderate</span>
+<span>Severe</span>
+</div>
+</div>
+<!-- Active Transit Alerts -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/20 overflow-hidden">
+<div class="p-4 border-b border-surface-container-high bg-surface-container/30 flex justify-between items-center">
+<h4 class="font-label-caps text-label-caps text-on-surface uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-error">warning</span> Active Alerts
+             </h4>
+<span class="bg-error text-on-error font-metric-trend text-metric-trend px-2 py-0.5 rounded-full text-[10px]">3</span>
+</div>
+<div class="p-0">
+<div class="p-3 border-b border-surface-container-high hover:bg-surface-container/10 transition-colors cursor-pointer flex gap-3">
+<div class="w-1 h-full bg-tertiary-fixed-dim rounded-full"></div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium text-[13px]">Line R Delay</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-[12px] leading-tight mt-1">15 min delay due to signal failure at Downtown Station.</p>
+</div>
+</div>
+<div class="p-3 border-b border-surface-container-high hover:bg-surface-container/10 transition-colors cursor-pointer flex gap-3">
+<div class="w-1 h-full bg-error rounded-full"></div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium text-[13px]">Bridge Closure</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-[12px] leading-tight mt-1">Westbound lanes closed on North Bridge for emergency repairs.</p>
+</div>
+</div>
+<div class="p-3 hover:bg-surface-container/10 transition-colors cursor-pointer flex gap-3">
+<div class="w-1 h-full bg-secondary rounded-full"></div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium text-[13px]">Bus Reroute</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-[12px] leading-tight mt-1">Route 44 detoured around Civic Plaza until 18:00.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
