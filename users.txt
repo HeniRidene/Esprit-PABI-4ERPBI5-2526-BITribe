@@ -1,0 +1,15 @@
+Directeur Général (Sees all dashboards)
+Email: heni.ridene@esprit.tn
+Password: director2024
+
+Directeur Transition Écologique
+Email: sbissi.mohamed@esprit.tn
+Password: service2024
+
+Directeur Sécurité
+Email: eya.hammami@esprit.tn
+Password: safety2024
+
+Directeur Mobilité
+Email: emnabaya.benromdhane@esprit.tn
+Password: mobility2024
