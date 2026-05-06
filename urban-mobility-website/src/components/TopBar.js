@@ -1,11 +1,10 @@
 "use client";
 
 import { useAuth, ROLES } from "@/context/AuthContext";
-import { Search, Bell, Settings, Command } from "lucide-react";
-import Image from "next/image";
+import { Search, Bell, Settings, Command, BarChart3, Download, Share2 } from "lucide-react";
 
 export default function TopBar() {
-  const { user } = useAuth();
+  const { user, setActivePage } = useAuth();
   const role = user ? ROLES[user.role] : null;
 
   return (
@@ -15,8 +14,6 @@ export default function TopBar() {
     >
       {/* Context / Search */}
       <div className="flex items-center gap-8">
-        {/* Removed redundant logo from here */}
-        
         {/* Quick Search */}
         <div className="relative hidden lg:flex items-center group">
           <Search className="absolute left-4 w-4 h-4 text-outline group-focus-within:text-primary transition-colors" />
@@ -30,6 +27,27 @@ export default function TopBar() {
             <span className="text-[11px] font-bold text-outline">K</span>
           </div>
         </div>
+      </div>
+
+      {/* Center Actions */}
+      <div className="hidden lg:flex items-center gap-3">
+        {role?.pages?.length > 1 && (
+          <button
+            onClick={() => setActivePage(role.pages[1])}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-[#002d6d] hover:shadow-md transition-all text-sm font-medium"
+          >
+            <BarChart3 className="w-4 h-4" />
+            Dashboards Power BI
+          </button>
+        )}
+        <button className="flex items-center gap-2 px-4 py-2 bg-white text-primary border border-outline-variant/30 rounded-xl hover:bg-surface-low transition-all text-sm font-medium">
+          <Download className="w-4 h-4" />
+          Export PDF
+        </button>
+        <button className="flex items-center gap-2 px-4 py-2 bg-white text-primary border border-outline-variant/30 rounded-xl hover:bg-surface-low transition-all text-sm font-medium">
+          <Share2 className="w-4 h-4" />
+          Partager
+        </button>
       </div>
 
       {/* Right actions */}

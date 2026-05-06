@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 /**
  * Base Power BI embed URL for the report.
@@ -84,6 +84,25 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [activePage, setActivePage] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Restore user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("urban_mobility_user");
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
+        const role = ROLES[parsed.role];
+        if (role) {
+          setActivePage(role.pages[0]);
+        }
+      } catch (err) {
+        console.error("Failed to parse user from localStorage", err);
+      }
+    }
+    setIsInitialized(true);
+  }, []);
 
   /**
    * Login with email + password via the /api/auth endpoint.
@@ -115,7 +134,7 @@ export function AuthProvider({ children }) {
         return false;
       }
 
-      setUser({
+      const userData = {
         name: data.user.name,
         email: data.user.email,
         role: data.user.role,
@@ -126,7 +145,10 @@ export function AuthProvider({ children }) {
           .join("")
           .toUpperCase()
           .slice(0, 2),
-      });
+      };
+
+      setUser(userData);
+      localStorage.setItem("urban_mobility_user", JSON.stringify(userData));
 
       setActivePage(role.pages[0]);
       setIsLoading(false);
@@ -142,6 +164,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     setActivePage(null);
     setLoginError(null);
+    localStorage.removeItem("urban_mobility_user");
   }, []);
 
   return (
@@ -155,6 +178,7 @@ export function AuthProvider({ children }) {
         setLoginError,
         activePage,
         setActivePage,
+        isInitialized,
       }}
     >
       {children}

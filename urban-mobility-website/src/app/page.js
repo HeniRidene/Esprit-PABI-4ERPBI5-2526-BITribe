@@ -7,7 +7,11 @@ import TopBar from "@/components/TopBar";
 import DashboardMain from "@/components/DashboardMain";
 
 function AppContent() {
-  const { user } = useAuth();
+  const { user, isInitialized } = useAuth();
+
+  if (!isInitialized) {
+    return null; // Or a subtle loading state to prevent flash
+  }
 
   if (!user) {
     return <LoginPage />;

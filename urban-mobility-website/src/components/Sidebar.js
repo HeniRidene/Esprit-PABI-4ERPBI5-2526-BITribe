@@ -5,7 +5,6 @@ import {
   Home, BarChart3, FolderTree, ShieldCheck, Leaf, Bus,
   HelpCircle, Headphones, LogOut, ChevronRight, LayoutDashboard
 } from "lucide-react";
-import Image from "next/image";
 
 /* Map page IDs to icons */
 const pageIcons = {
@@ -29,7 +28,7 @@ export default function Sidebar() {
       <div className="mb-10 mt-2 px-2">
         <div className="flex items-center gap-3">
           <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center shadow-sm overflow-hidden border border-outline-variant/30">
-            <Image src="/logo.png" alt="Logo" width={48} height={48} className="object-contain" />
+            <img src="/logo.png" alt="Logo" width={48} height={48} className="object-contain" />
           </div>
           <div>
             <h2 className="text-[16px] font-bold text-primary tracking-tight leading-tight">Urban mobility</h2>
