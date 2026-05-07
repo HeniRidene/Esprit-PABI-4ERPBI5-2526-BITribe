@@ -3,18 +3,35 @@
 import { useAuth, ROLES, getPowerBiEmbedUrl } from "@/context/AuthContext";
 import { BarChart3 } from "lucide-react";
 import IntroductionPage from "./IntroductionPage";
+import LoginPage from "./LoginPage";
+import AboutUsPage from "./AboutUsPage";
 
 export default function DashboardMain() {
-  const { user, activePage } = useAuth();
+  const { user, activePage, showLoginPrompt } = useAuth();
   const role = user ? ROLES[user.role] : null;
 
-  if (!role) return null;
+  if (showLoginPrompt && !user) {
+    return (
+      <main className="flex-1 overflow-y-auto p-6 bg-[#f8f9ff] flex items-center justify-center">
+        <LoginPage />
+      </main>
+    );
+  }
 
   // If the active page is the introduction/accueil page
   if (activePage?.id === "accueil") {
     return (
       <main className="flex-1 overflow-y-auto p-6 bg-[#f8f9ff]">
         <IntroductionPage />
+      </main>
+    );
+  }
+
+  // If the active page is about us
+  if (activePage?.id === "about") {
+    return (
+      <main className="flex-1 overflow-y-auto p-6 bg-[#f8f9ff]">
+        <AboutUsPage />
       </main>
     );
   }

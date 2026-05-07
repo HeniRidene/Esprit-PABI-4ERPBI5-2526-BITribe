@@ -13,10 +13,6 @@ function AppContent() {
     return null; // Or a subtle loading state to prevent flash
   }
 
-  if (!user) {
-    return <LoginPage />;
-  }
-
   return (
     <div className="flex h-screen overflow-hidden mesh-bg">
       <Sidebar />

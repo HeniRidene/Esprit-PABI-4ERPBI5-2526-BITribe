@@ -16,8 +16,8 @@ const pageIcons = {
 };
 
 export default function Sidebar() {
-  const { user, logout, activePage, setActivePage } = useAuth();
-  const role = user ? ROLES[user.role] : null;
+  const { user, logout, activePage, handlePageChange } = useAuth();
+  const pagesToDisplay = user ? ROLES[user.role].pages : ROLES.DIRECTOR.pages;
 
   return (
     <aside
@@ -40,14 +40,14 @@ export default function Sidebar() {
       {/* Main Nav — pages from role config */}
       <nav className="flex-1 space-y-1.5">
         <p className="px-3 text-[11px] font-bold text-outline uppercase tracking-[0.1em] mb-4">Analytics Dashboard</p>
-        {(role?.pages || []).map((page) => {
+        {pagesToDisplay.map((page) => {
           const Icon = pageIcons[page.id] || BarChart3;
           const isActive = activePage?.id === page.id;
           return (
             <button
               key={page.id}
               id={`nav-${page.id}`}
-              onClick={() => setActivePage(page)}
+              onClick={() => handlePageChange(page)}
               className={`w-full flex items-center justify-between px-3 py-3 rounded-xl transition-all duration-200 group cursor-pointer
                 ${isActive
                   ? "bg-primary text-white"
@@ -80,14 +80,16 @@ export default function Sidebar() {
             <Headphones className="w-4 h-4" />
             <span className="text-[13px] font-medium">Support</span>
           </button>
-          <button
-            id="logout-button"
-            onClick={logout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-error/80 hover:text-error hover:bg-error-container/20 transition-all duration-200 cursor-pointer mt-2"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="text-[13px] font-medium">Déconnexion</span>
-          </button>
+          {user && (
+            <button
+              id="logout-button"
+              onClick={logout}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-error/80 hover:text-error hover:bg-error-container/20 transition-all duration-200 cursor-pointer mt-2"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="text-[13px] font-medium">Logout</span>
+            </button>
+          )}
         </div>
       </div>
     </aside>

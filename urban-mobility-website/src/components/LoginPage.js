@@ -38,9 +38,9 @@ export default function LoginPage() {
           {/* Login Body */}
           <div className="p-10 bg-white">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-primary">Connexion sécurisée</h2>
+              <h2 className="text-2xl font-bold text-primary">Secure Login</h2>
               <p className="text-outline mt-2 text-[14px]">
-                Veuillez entrer vos identifiants pour accéder au tableau de bord.
+                Please enter your credentials to access the dashboard.
               </p>
             </div>
 
@@ -60,13 +60,13 @@ export default function LoginPage() {
 
               <div className="space-y-1.5">
                 <label className="text-[12px] font-bold text-primary uppercase tracking-wider ml-1">
-                  Adresse Email
+                  Email Address
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="nom.prenom@esprit.tn"
+                  placeholder="first.last@esprit.tn"
                   className="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface-low focus:bg-white focus:border-primary focus:outline-none transition-all text-[14px]"
                   required
                 />
@@ -74,7 +74,7 @@ export default function LoginPage() {
 
               <div className="space-y-1.5">
                 <label className="text-[12px] font-bold text-primary uppercase tracking-wider ml-1">
-                  Mot de passe
+                  Password
                 </label>
                 <input
                   type="password"
@@ -96,7 +96,7 @@ export default function LoginPage() {
                 ) : (
                   <>
                     <KeyRound className="w-4 h-4" />
-                    Se connecter
+                    Login
                   </>
                 )}
               </button>
@@ -108,13 +108,13 @@ export default function LoginPage() {
                 type="button"
                 className="text-[13px] font-semibold text-outline hover:text-primary transition-colors"
               >
-                Connexion via Microsoft SSO
+                Login via Microsoft SSO
               </button>
             </div>
           </div>
 
           <div className="px-10 py-5 bg-surface-low/50 border-t border-outline-variant/10 text-center">
-            <p className="text-[10px] text-outline font-bold uppercase tracking-[0.15em]">Plateforme sécurisée · Gouvernance des données Urbaines</p>
+            <p className="text-[10px] text-outline font-bold uppercase tracking-[0.15em]">Secure Platform · Urban Data Governance</p>
           </div>
         </div>
       </div>

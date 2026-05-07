@@ -20,46 +20,46 @@ const POWERBI_BASE_URL =
 export const ROLES = {
   DIRECTOR: {
     id: "DIRECTOR",
-    label: "Directeur Général",
+    label: "General Director",
     title: "Global Executive Dashboard",
-    subtitle: "Vue complète de tous les indicateurs stratégiques.",
+    subtitle: "Comprehensive view of all strategic indicators.",
     pages: [
-      { id: "accueil", label: "Accueil", pageName: "" },
-      { id: "eco-page-1", label: "Émissions & Énergie", pageName: "ReportSection1" },
-      { id: "eco-page-2", label: "Projets Verts", pageName: "ReportSection2" },
-      { id: "mob-page-1", label: "Performance Réseau", pageName: "ReportSection3" },
-      { id: "sec-page-1", label: "Sécurité & Maintenance", pageName: "ReportSection4" },
+      { id: "accueil", label: "Home", pageName: "" },
+      { id: "eco-page-1", label: "Emissions & Energy", pageName: "ReportSection1" },
+      { id: "eco-page-2", label: "Green Projects", pageName: "ReportSection2" },
+      { id: "mob-page-1", label: "Network Performance", pageName: "ReportSection3" },
+      { id: "sec-page-1", label: "Security & Maintenance", pageName: "ReportSection4" },
     ],
   },
   TRANSITION_ECOLOGIQUE: {
     id: "TRANSITION_ECOLOGIQUE",
-    label: "Transition Écologique",
+    label: "Ecological Transition",
     title: "Sustainability & Emissions Analytics",
-    subtitle: "Suivi en temps réel de l'impact environnemental des réseaux de transport.",
+    subtitle: "Real-time tracking of the environmental impact of transport networks.",
     pages: [
-      { id: "accueil", label: "Accueil", pageName: "" },
-      { id: "eco-page-1", label: "Émissions & Énergie", pageName: "ReportSection1" },
-      { id: "eco-page-2", label: "Projets Verts", pageName: "ReportSection2" },
+      { id: "accueil", label: "Home", pageName: "" },
+      { id: "eco-page-1", label: "Emissions & Energy", pageName: "ReportSection1" },
+      { id: "eco-page-2", label: "Green Projects", pageName: "ReportSection2" },
     ],
   },
   MOBILITE1: {
     id: "MOBILITE1",
-    label: "Mobilité",
+    label: "Mobility",
     title: "Strategic Territory Overview",
-    subtitle: "Métriques de performance en temps réel pour les hubs urbains.",
+    subtitle: "Real-time performance metrics for urban hubs.",
     pages: [
-      { id: "accueil", label: "Accueil", pageName: "" },
-      { id: "mob-page-1", label: "Performance Réseau", pageName: "ReportSection3" },
+      { id: "accueil", label: "Home", pageName: "" },
+      { id: "mob-page-1", label: "Network Performance", pageName: "ReportSection3" },
     ],
   },
   SECURITE1: {
     id: "SECURITE1",
-    label: "Sécurité",
+    label: "Security",
     title: "Operational Safety & Maintenance",
-    subtitle: "Santé de l'infrastructure et rapports d'incidents en temps réel.",
+    subtitle: "Infrastructure health and real-time incident reports.",
     pages: [
-      { id: "accueil", label: "Accueil", pageName: "" },
-      { id: "sec-page-1", label: "Sécurité & Maintenance", pageName: "ReportSection4" },
+      { id: "accueil", label: "Home", pageName: "" },
+      { id: "sec-page-1", label: "Security & Maintenance", pageName: "ReportSection4" },
     ],
   },
 };
@@ -83,8 +83,18 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
-  const [activePage, setActivePage] = useState(null);
+  const [activePage, setActivePage] = useState({ id: "accueil", label: "Home", pageName: "" });
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  const handlePageChange = useCallback((page) => {
+    if (page.id !== "accueil" && page.id !== "about" && !user) {
+      setShowLoginPrompt(true);
+    } else {
+      setShowLoginPrompt(false);
+      setActivePage(page);
+    }
+  }, [user]);
 
   // Restore user from localStorage on mount
   useEffect(() => {
@@ -122,14 +132,14 @@ export function AuthProvider({ children }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setLoginError(data.error || "Erreur de connexion");
+        setLoginError(data.error || "Login error");
         setIsLoading(false);
         return false;
       }
 
       const role = ROLES[data.user.role];
       if (!role) {
-        setLoginError("Rôle utilisateur non configuré");
+        setLoginError("User role not configured");
         setIsLoading(false);
         return false;
       }
@@ -151,10 +161,11 @@ export function AuthProvider({ children }) {
       localStorage.setItem("urban_mobility_user", JSON.stringify(userData));
 
       setActivePage(role.pages[0]);
+      setShowLoginPrompt(false);
       setIsLoading(false);
       return true;
     } catch (err) {
-      setLoginError("Impossible de contacter le serveur");
+      setLoginError("Unable to contact server");
       setIsLoading(false);
       return false;
     }
@@ -162,7 +173,8 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(() => {
     setUser(null);
-    setActivePage(null);
+    setActivePage({ id: "accueil", label: "Home", pageName: "" });
+    setShowLoginPrompt(false);
     setLoginError(null);
     localStorage.removeItem("urban_mobility_user");
   }, []);
@@ -178,6 +190,9 @@ export function AuthProvider({ children }) {
         setLoginError,
         activePage,
         setActivePage,
+        handlePageChange,
+        showLoginPrompt,
+        setShowLoginPrompt,
         isInitialized,
       }}
     >

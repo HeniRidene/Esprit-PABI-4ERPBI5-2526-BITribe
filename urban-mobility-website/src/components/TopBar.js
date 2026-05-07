@@ -1,10 +1,12 @@
 "use client";
+import { useState } from "react";
 
 import { useAuth, ROLES } from "@/context/AuthContext";
-import { Search, Bell, Settings, Command, BarChart3, Download, Share2 } from "lucide-react";
+import { Search, Bell, Settings, Command, BarChart3, Download, Share2, LogOut, Users } from "lucide-react";
 
 export default function TopBar() {
-  const { user, setActivePage } = useAuth();
+  const { user, setActivePage, setShowLoginPrompt, logout, handlePageChange } = useAuth();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const role = user ? ROLES[user.role] : null;
 
   return (
@@ -31,6 +33,13 @@ export default function TopBar() {
 
       {/* Center Actions */}
       <div className="hidden lg:flex items-center gap-3">
+        <button
+          onClick={() => handlePageChange({ id: 'about', label: 'About Us' })}
+          className="flex items-center gap-2 px-4 py-2 bg-white text-primary border border-outline-variant/30 rounded-xl hover:bg-surface-low transition-all text-sm font-medium"
+        >
+          <Users className="w-4 h-4" />
+          About Us
+        </button>
         {role?.pages?.length > 1 && (
           <button
             onClick={() => setActivePage(role.pages[1])}
@@ -46,7 +55,7 @@ export default function TopBar() {
         </button>
         <button className="flex items-center gap-2 px-4 py-2 bg-white text-primary border border-outline-variant/30 rounded-xl hover:bg-surface-low transition-all text-sm font-medium">
           <Share2 className="w-4 h-4" />
-          Partager
+          Share
         </button>
       </div>
 
@@ -72,17 +81,45 @@ export default function TopBar() {
         <div className="h-8 w-[1px] bg-outline-variant/30" />
 
         {/* User Profile */}
-        {user && (
-          <button className="flex items-center gap-3 py-1.5 px-2 hover:bg-surface-low rounded-full transition-all duration-200 cursor-pointer group">
-            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-[12px] font-bold text-white">
-                {user.avatarInitials}
-              </span>
-            </div>
-            <div className="hidden md:flex flex-col items-start pr-2">
-              <span className="text-[14px] font-semibold text-primary leading-tight">{user.name}</span>
-              <span className="text-[11px] font-bold text-outline uppercase tracking-wider">{user.role.replace('_', ' ')}</span>
-            </div>
+        {user ? (
+          <div className="relative">
+            <button 
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="flex items-center gap-3 py-1.5 px-2 hover:bg-surface-low rounded-full transition-all duration-200 cursor-pointer"
+            >
+              <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center">
+                <span className="text-[12px] font-bold text-white">
+                  {user.avatarInitials}
+                </span>
+              </div>
+              <div className="hidden md:flex flex-col items-start pr-2">
+                <span className="text-[14px] font-semibold text-primary leading-tight">{user.name}</span>
+                <span className="text-[11px] font-bold text-outline uppercase tracking-wider">{user.role.replace('_', ' ')}</span>
+              </div>
+            </button>
+            
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
+              <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.08)] border border-outline-variant/30 transition-all duration-200 py-2 z-50 animate-fade-in-up">
+                <button 
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    logout();
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-error/90 hover:text-error hover:bg-error-container/20 transition-colors text-left"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button 
+            onClick={() => setShowLoginPrompt(true)}
+            className="px-5 py-2 bg-primary text-white text-sm font-medium rounded-xl hover:bg-[#002d6d] transition-all"
+          >
+            Login
           </button>
         )}
       </div>
