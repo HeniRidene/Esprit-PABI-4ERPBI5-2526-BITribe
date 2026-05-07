@@ -16,7 +16,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="min-h-full" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <body className="min-h-full" style={{ fontFamily: "'Inter', sans-serif" }} suppressHydrationWarning>
         {children}
       </body>
     </html>
