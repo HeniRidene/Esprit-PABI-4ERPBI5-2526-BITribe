@@ -10,3 +10,6 @@ __pycache__/
 
 # Environment variables
 .env
+
+# Large data files (exceed GitHub 100MB limit)
+data/chunks_head/

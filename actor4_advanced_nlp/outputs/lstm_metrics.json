@@ -1,0 +1,7 @@
+{
+  "zone": 1,
+  "lstm_mae": 0.1443,
+  "lstm_rmse": 0.2212,
+  "prophet_mae": 0.2883,
+  "prophet_rmse": 0.3855
+}

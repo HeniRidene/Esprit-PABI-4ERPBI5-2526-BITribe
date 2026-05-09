@@ -1,0 +1,73 @@
+2026-05-08 21:53:55,434 [INFO] >>> STEP: Data Loader
+2026-05-08 21:53:55,434 [INFO] === DATA LOADER v1 — Actor 3 Sécurité ===
+2026-05-08 21:53:55,492 [INFO] Loaded facts → shape: (20650, 27)
+2026-05-08 21:53:55,496 [INFO] Dedup removed 18585 rows → 2065 remain
+2026-05-08 21:53:55,497 [INFO] Dropped 154 phantom-zone rows → 1911 remain
+2026-05-08 21:53:55,554 [INFO] After ⊕ dim_temps → shape: (1911, 14)
+2026-05-08 21:53:55,559 [INFO] After ⊕ dim_zone → shape: (1911, 17)
+2026-05-08 21:53:55,561 [INFO] Rows with accidents>0: 191 (10.0%)
+2026-05-08 21:53:55,562 [INFO] Rows with graves>0:    28
+2026-05-08 21:53:55,562 [INFO] Rows with mortels>0:   0
+2026-05-08 21:53:55,562 [INFO] Final clean shape: (1911, 17)
+2026-05-08 21:53:55,563 [INFO] No nulls in clean DataFrame.
+2026-05-08 21:53:55,564 [INFO]     ✅ Data Loader — 0.1s
+2026-05-08 21:53:55,565 [INFO] >>> STEP: Feature Engineering
+2026-05-08 21:53:55,565 [INFO] === FEATURE ENGINEERING v1 — Actor 3 Sécurité ===
+2026-05-08 21:53:55,566 [INFO] nb_mortels > 0 samples: 0
+2026-05-08 21:53:55,566 [WARNING] nb_mortels > 0 rows (0) < threshold (40). Merging class 2 (mortel) into class 1 (grave/serious). MODEL IS BINARY: 0=none, 1=serious (grave OR mortel). This avoids training on near-empty classes — documented for the professor.
+2026-05-08 21:53:55,569 [INFO] severity_class distribution (2 classes): {0: np.int64(1883), 1: np.int64(28)}
+2026-05-08 21:53:55,578 [INFO] Feature engineering complete. df_ml: (1911, 24)  df_zone: (10, 11)
+2026-05-08 21:53:55,578 [INFO] New columns: ['severity_class', 'severity_label', 'gravite_index', 'zone_encoded', 'mode_encoded', 'has_accident', 'crime_rate_scaled']
+2026-05-08 21:53:55,579 [INFO]     ✅ Feature Engineering — 0.0s
+2026-05-08 21:53:57,610 [INFO] >>> STEP: Classification (Severity)
+2026-05-08 21:53:57,610 [INFO] === CLASSIFICATION — Accident Severity (Random Forest) ===
+2026-05-08 21:53:57,612 [INFO] Classification set: 1911 rows  (0 dropped for NaN)
+2026-05-08 21:53:57,614 [INFO] Classes: [0, 1]  |  distribution: {np.int64(0): np.int64(1883), np.int64(1): np.int64(28)}
+2026-05-08 21:53:57,614 [INFO] Running 5-fold Stratified CV...
+2026-05-08 21:54:01,426 [INFO] CV F1-macro: 1.0000 ± 0.0000
+2026-05-08 21:54:03,703 [INFO] [Test fold] F1-macro=1.0000  F1-weighted=1.0000  AUC=1.0000
+2026-05-08 21:54:03,703 [INFO] Confusion matrix: [[376, 0], [0, 6]]
+2026-05-08 21:54:04,535 [INFO] Model & plots saved → outputs/
+2026-05-08 21:54:04,537 [INFO] Report saved → outputs/classification_report.json
+2026-05-08 21:54:04,538 [INFO]     ✅ Classification (Severity) — 6.9s
+2026-05-08 21:54:04,589 [INFO] >>> STEP: Clustering (Zone Risk)
+2026-05-08 21:54:04,589 [INFO] === CLUSTERING — Zone Risk Profiles (K-Means k=3) ===
+2026-05-08 21:54:04,592 [INFO] Clustering 10 zones on 5 features: ['nb_accidents', 'nb_graves', 'volume_crimes', 'taux_criminalite', 'usagers_vulnerables']
+2026-05-08 21:54:07,114 [INFO] k=3  Silhouette=0.2419  Inertia=20.6916
+2026-05-08 21:54:07,117 [INFO] Cluster labels: {0: 'Low risk', 1: 'High risk', 2: 'Medium risk'}
+2026-05-08 21:54:07,122 [INFO] Cluster composition:
+ zone_sk  risk_cluster_id  risk_level
+       1                2 Medium risk
+       2                0    Low risk
+       3                1   High risk
+       4                2 Medium risk
+       5                0    Low risk
+       6                0    Low risk
+       7                2 Medium risk
+       8                0    Low risk
+       9                1   High risk
+      10                1   High risk
+2026-05-08 21:54:07,435 [INFO] Saved → outputs/risk_zone_clusters.csv
+2026-05-08 21:54:07,438 [INFO]     ✅ Clustering (Zone Risk) — 2.8s
+2026-05-08 21:54:07,439 [INFO] >>> STEP: Anomaly Detection
+2026-05-08 21:54:07,439 [INFO] === ANOMALY DETECTION — Isolation Forest (contamination=5%) ===
+2026-05-08 21:54:07,441 [INFO] Anomaly detection set: 1911 rows  features: ['volume_crimes', 'nb_accidents', 'taux_criminalite', 'zone_sk', 'mois']
+2026-05-08 21:54:08,289 [INFO] Anomalies detected: 96 (5.0%)
+2026-05-08 21:54:08,291 [INFO] Precision@96: 0.375  (36/96 flagged anomalies in known high-risk periods/zones)
+2026-05-08 21:54:09,167 [INFO] Saved anomaly_flags.csv (1911 rows, 96 alerts)
+2026-05-08 21:54:09,175 [INFO]     ✅ Anomaly Detection — 1.7s
+2026-05-08 21:54:09,177 [INFO] >>> STEP: Evaluation
+2026-05-08 21:54:09,177 [INFO] Starting central evaluation for Actor 3...
+2026-05-08 21:54:09,434 [INFO] [Classification] CV F1-macro=1.0
+2026-05-08 21:54:09,483 [INFO] [Clustering] k=3  Silhouette=0.2419
+2026-05-08 21:54:09,502 [INFO] [Anomaly] 96/1911 anomalies (5.0%)
+2026-05-08 21:54:09,503 [INFO] [KPIs] Densité accidents=19.9  Indice gravité=0.1407
+2026-05-08 21:54:09,506 [INFO] Evaluation complete. Report saved → outputs/metrics_report.json
+2026-05-08 21:54:09,507 [INFO]     ✅ Evaluation — 0.3s
+2026-05-08 21:54:09,508 [INFO] >>> STEP: Export Predictions
+2026-05-08 21:54:09,509 [INFO] === EXPORT PREDICTIONS — Actor 3 ===
+2026-05-08 21:54:09,949 [INFO]   ✅ outputs/severity_predictions.csv  (1911 rows)
+2026-05-08 21:54:09,951 [INFO]   ✅ outputs/risk_zone_clusters.csv (10 zones)
+2026-05-08 21:54:09,961 [INFO]   ✅ outputs/anomaly_flags.csv (1911 rows, 96 alerts)
+2026-05-08 21:54:09,961 [INFO] Export complete.
+2026-05-08 21:54:09,963 [INFO]     ✅ Export Predictions — 0.5s

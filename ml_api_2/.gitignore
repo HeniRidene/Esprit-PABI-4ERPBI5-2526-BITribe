@@ -1,0 +1,28 @@
+# MLflow large data files
+mlflow/mlruns/**/chunks_head/
+mlflow/mlruns/**/chunks_head/*
+data/chunks_head/
+data/chunks/
+**/chunks_head/**
+**/chunks/**
+
+# MLflow binary artifacts
+mlflow/mlruns/**/*.db
+mlflow/mlruns/**/meta.yaml
+*.parquet
+
+# Python
+__pycache__/
+*.py[cod]
+*.pkl
+.venv/
+venv/
+*.egg-info/
+
+# Logs
+ml_api.log
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

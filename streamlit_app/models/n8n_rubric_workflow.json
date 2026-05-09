@@ -1,0 +1,365 @@
+{
+  "name": "ESPRIT ML — Rubric Complete Prediction Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ml-predict",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "n1-webhook",
+      "name": "🌐 Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "webhookId": "esprit-ml-rubric-webhook",
+      "notes": "Receives POST /webhook/ml-predict with {temp, humidity} in the body. Acts as the on-demand trigger for manual / external calls."
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "n2-cron",
+      "name": "⏰ Cron Trigger (Hourly Auto-Predict)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 480],
+      "notes": "Fires every hour on the hour. Sends fixed sensor defaults to the prediction pipeline. Demonstrates automatic scheduled inference."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ══════════════════════════════════════════════\n// Node: Validate & Build Webhook Payload\n// ══════════════════════════════════════════════\n// Reads incoming webhook body, validates fields,\n// and builds a clean { temp, humidity } payload.\n// ══════════════════════════════════════════════\n\nconst body = $input.first().json.body || $input.first().json;\n\nconst temp     = parseFloat(body.temp);\nconst humidity = parseFloat(body.humidity);\n\n// ── Input validation ──────────────────────────\nif (isNaN(temp) || isNaN(humidity)) {\n  throw new Error('Validation error: both \"temp\" (°C) and \"humidity\" (%) must be numeric.');\n}\n\nif (temp < -50 || temp > 60) {\n  throw new Error(`Validation error: temp=${temp} is out of range [-50, 60].`);\n}\n\nif (humidity < 0 || humidity > 100) {\n  throw new Error(`Validation error: humidity=${humidity} is out of range [0, 100].`);\n}\n\nconsole.log(`[Webhook Mapper] temp=${temp} humidity=${humidity}`);\n\nreturn [{ json: { temp: temp, humidity: humidity, trigger: 'webhook' } }];"
+      },
+      "id": "n3-webhook-mapper",
+      "name": "✅ Validate Webhook Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300],
+      "notes": "Validates temp (°C) and humidity (%) from the webhook body. Throws a descriptive error for bad inputs before hitting the ML API."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ══════════════════════════════════════════════\n// Node: Build Cron Default Payload\n// ══════════════════════════════════════════════\n// For scheduled runs, generate a simulated sensor\n// reading (or pull from a database/API in production).\n// Here we randomise within a realistic range to\n// demonstrate a real automated pipeline.\n// ══════════════════════════════════════════════\n\n// Simulate sensor reading (replace with DB/API call in production)\nconst temp     = parseFloat((Math.random() * 35 + 5).toFixed(2));   // 5°C – 40°C\nconst humidity = parseFloat((Math.random() * 60 + 20).toFixed(2));  // 20% – 80%\n\nconsole.log(`[Cron Scheduler] Auto-generated reading — temp=${temp} humidity=${humidity}`);\n\nreturn [{ json: { temp, humidity, trigger: 'cron' } }];"
+      },
+      "id": "n4-cron-payload",
+      "name": "🔧 Build Cron Sensor Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 480],
+      "notes": "Generates a simulated sensor reading for each scheduled run. In production, replace with a DB query or external sensor API call."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/predict",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "temp": "={{ $json.temp }}",
+          "humidity": "={{ $json.humidity }}"
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true
+            }
+          },
+          "redirect": {
+            "redirect": {
+              "followRedirects": true,
+              "maxRedirects": 3
+            }
+          }
+        }
+      },
+      "id": "n5-http-predict",
+      "name": "📡 POST /predict (ML Endpoint)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [760, 300],
+      "continueOnFail": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Calls FastAPI POST /predict with temp+humidity. continueOnFail=true ensures errors reach the error branch. Retries 3×  with 2s delay."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/predict",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "temp": "={{ $json.temp }}",
+          "humidity": "={{ $json.humidity }}"
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "n6-http-predict-cron",
+      "name": "📡 POST /predict (Cron)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [760, 480],
+      "continueOnFail": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Identical HTTP call as the webhook branch — same ML endpoint, same retry logic. Having separate nodes makes debugging each trigger independent."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-status-webhook",
+              "leftValue": "={{ ($json.body && $json.body.status) || $json.status || '' }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "n7-if-success",
+      "name": "❓ Prediction Succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1020, 300],
+      "notes": "Routes to Success branch (true) if FastAPI returned status=success. Routes to Error branch (false) for any failure, timeout, or non-200 response."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-status-cron",
+              "leftValue": "={{ ($json.body && $json.body.status) || $json.status || '' }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "n8-if-success-cron",
+      "name": "❓ Cron Prediction OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1020, 480],
+      "notes": "Identical success check for the cron branch. Separating IF nodes per trigger keeps each path independently traceable in the execution log."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ══════════════════════════════════════════════\n// Node: Format & Log Successful Prediction\n// ══════════════════════════════════════════════\n// Normalises the FastAPI response and attaches\n// execution metadata for downstream storage.\n// ══════════════════════════════════════════════\n\nconst item = $input.first().json;\nconst resp = item.body || item;\n\nconst record = {\n  timestamp:    new Date().toISOString(),\n  trigger:      item.trigger || 'webhook',\n  status:       'success',\n  input: {\n    temp:     resp.input?.temp     ?? null,\n    humidity: resp.input?.humidity ?? null\n  },\n  prediction:   resp.prediction,\n  latency_ms:   resp.latency_ms,\n  model_source: resp.model_source || 'unknown'\n};\n\nconsole.log(`[Success Logger] prediction=${record.prediction} latency=${record.latency_ms}ms trigger=${record.trigger}`);\n\nreturn [{ json: record }];"
+      },
+      "id": "n9-success-format",
+      "name": "📊 Format Success Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, 200],
+      "notes": "Normalises the FastAPI success response into a uniform record shape ready for storage. Logs prediction value and latency."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ══════════════════════════════════════════════\n// Node: Format & Log Successful Cron Prediction\n// ══════════════════════════════════════════════\n\nconst item = $input.first().json;\nconst resp = item.body || item;\n\nconst record = {\n  timestamp:    new Date().toISOString(),\n  trigger:      'cron',\n  status:       'success',\n  input: {\n    temp:     resp.input?.temp     ?? null,\n    humidity: resp.input?.humidity ?? null\n  },\n  prediction:   resp.prediction,\n  latency_ms:   resp.latency_ms,\n  model_source: resp.model_source || 'unknown'\n};\n\nconsole.log(`[Cron Success] prediction=${record.prediction} latency=${record.latency_ms}ms`);\n\nreturn [{ json: record }];"
+      },
+      "id": "n10-cron-success-format",
+      "name": "📊 Format Cron Success",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, 420],
+      "notes": "Same formatting logic as the webhook success node, but marks trigger='cron' for easy filtering in the predictions.json log."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ══════════════════════════════════════════════\n// Node: Handle & Log Prediction Error\n// ══════════════════════════════════════════════\n// Extracts error details from FastAPI response\n// or from n8n's own error object, logs everything\n// for diagnostics, and returns a structured record.\n// ══════════════════════════════════════════════\n\nconst item  = $input.first();\nconst body  = item.json?.body  || item.json || {};\nconst error = item.json?.error || item.error || {};\n\nconst httpStatus  = item.json?.statusCode || body.statusCode || 'unknown';\nconst errorDetail = body.detail || error.message || body.message || 'Unknown error from ML backend';\nconst trigger     = item.json?.trigger || body.trigger || 'webhook';\n\nconsole.error(\n  `[Error Handler] trigger=${trigger} http_status=${httpStatus} ` +\n  `detail=\"${errorDetail}\"`\n);\n\nreturn [{\n  json: {\n    timestamp:    new Date().toISOString(),\n    trigger,\n    status:       'error',\n    http_status:  httpStatus,\n    error_detail: errorDetail,\n    input: {\n      temp:     item.json?.temp     ?? null,\n      humidity: item.json?.humidity ?? null\n    },\n    prediction:  null\n  }\n}];"
+      },
+      "id": "n11-error-handler",
+      "name": "🚨 Handle Error + Log",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, 600],
+      "notes": "Captures ALL errors — HTTP 4xx/5xx, timeouts, network failures — from both webhook and cron branches. Logs actor, status, and full error detail."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ══════════════════════════════════════════════\n// Node: Save Prediction to JSON File\n// ══════════════════════════════════════════════\n// Appends the prediction record to predictions.json\n// via FastAPI's /predictions endpoint (GET to read,\n// or rely on FastAPI's own auto-save on /predict).\n//\n// In n8n we confirm storage by calling GET /predictions\n// and logging the updated total count.\n// Note: The actual file write happens inside FastAPI.\n// ══════════════════════════════════════════════\n\nconst record = $input.first().json;\n\n// The FastAPI /predict endpoint automatically saves to predictions.json.\n// Here we just enrich the record with n8n execution metadata.\nconst enriched = {\n  ...record,\n  n8n_execution_id: $execution?.id  || 'manual',\n  n8n_workflow:     $workflow?.name  || 'ESPRIT ML Rubric Workflow',\n  saved_at_n8n:     new Date().toISOString()\n};\n\nconsole.log(\n  `[Storage Confirm] timestamp=${enriched.timestamp} ` +\n  `prediction=${enriched.prediction} trigger=${enriched.trigger}`\n);\n\nreturn [{ json: enriched }];"
+      },
+      "id": "n12-save-record",
+      "name": "💾 Confirm Storage (JSON)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 310],
+      "notes": "Enriches the prediction record with n8n metadata (execution ID, workflow name). The actual file write is handled by FastAPI automatically on each /predict call."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Powered-By",
+                "value": "ESPRIT-ML-Gateway"
+              }
+            ]
+          }
+        }
+      },
+      "id": "n13-respond-success",
+      "name": "✅ Return 200 Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1800, 200],
+      "notes": "Returns HTTP 200 with the full prediction record to the webhook caller. Custom headers identify the gateway."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 422,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Powered-By",
+                "value": "ESPRIT-ML-Gateway"
+              }
+            ]
+          }
+        }
+      },
+      "id": "n14-respond-error",
+      "name": "❌ Return 422 Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1540, 600],
+      "notes": "Returns HTTP 422 with structured error body to the webhook caller. Error records are NOT saved to predictions.json."
+    }
+  ],
+  "connections": {
+    "🌐 Webhook Trigger": {
+      "main": [
+        [{ "node": "✅ Validate Webhook Input", "type": "main", "index": 0 }]
+      ]
+    },
+    "⏰ Cron Trigger (Hourly Auto-Predict)": {
+      "main": [
+        [{ "node": "🔧 Build Cron Sensor Payload", "type": "main", "index": 0 }]
+      ]
+    },
+    "✅ Validate Webhook Input": {
+      "main": [
+        [{ "node": "📡 POST /predict (ML Endpoint)", "type": "main", "index": 0 }]
+      ]
+    },
+    "🔧 Build Cron Sensor Payload": {
+      "main": [
+        [{ "node": "📡 POST /predict (Cron)", "type": "main", "index": 0 }]
+      ]
+    },
+    "📡 POST /predict (ML Endpoint)": {
+      "main": [
+        [{ "node": "❓ Prediction Succeeded?", "type": "main", "index": 0 }]
+      ]
+    },
+    "📡 POST /predict (Cron)": {
+      "main": [
+        [{ "node": "❓ Cron Prediction OK?", "type": "main", "index": 0 }]
+      ]
+    },
+    "❓ Prediction Succeeded?": {
+      "main": [
+        [{ "node": "📊 Format Success Record", "type": "main", "index": 0 }],
+        [{ "node": "🚨 Handle Error + Log",    "type": "main", "index": 0 }]
+      ]
+    },
+    "❓ Cron Prediction OK?": {
+      "main": [
+        [{ "node": "📊 Format Cron Success",  "type": "main", "index": 0 }],
+        [{ "node": "🚨 Handle Error + Log",   "type": "main", "index": 0 }]
+      ]
+    },
+    "📊 Format Success Record": {
+      "main": [
+        [{ "node": "💾 Confirm Storage (JSON)", "type": "main", "index": 0 }]
+      ]
+    },
+    "📊 Format Cron Success": {
+      "main": [
+        [{ "node": "💾 Confirm Storage (JSON)", "type": "main", "index": 0 }]
+      ]
+    },
+    "💾 Confirm Storage (JSON)": {
+      "main": [
+        [{ "node": "✅ Return 200 Success", "type": "main", "index": 0 }]
+      ]
+    },
+    "🚨 Handle Error + Log": {
+      "main": [
+        [{ "node": "❌ Return 422 Error", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "timezone": "Africa/Tunis"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "esprit-ml-rubric-v1"
+  }
+}

@@ -1,0 +1,21 @@
+entity,zone_sk,city,frequency
+Pass,6,Paris,3
+Amende,6,Paris,2
+Lyon,2,Lyon,2
+de France,3,Marseille,2
+Tram,5,Nice,2
+j’,3,Marseille,2
+Client honnete,3,Marseille,1
+Cher,3,Marseille,1
+C15,2,Lyon,1
+Applie,2,Lyon,1
+Bel Air,6,Paris,1
+Berny,6,Paris,1
+Degueulasse,3,Marseille,1
+Damrémont,6,Paris,1
+Conducteur,6,Paris,1
+Compliqué,6,Paris,1
+Complexité,2,Lyon,1
+Issy,6,Paris,1
+Fuyez,6,Paris,1
+Décaler,3,Marseille,1

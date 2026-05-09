@@ -29,6 +29,8 @@ export const ROLES = {
       { id: "eco-page-2", label: "Green Projects", pageName: "ReportSection2" },
       { id: "mob-page-1", label: "Network Performance", pageName: "ReportSection3" },
       { id: "sec-page-1", label: "Security & Maintenance", pageName: "ReportSection4" },
+      { id: "mlops", label: "MLOps Control", pageName: "" },
+      { id: "streamlit", label: "ML Predictions", pageName: "" },
     ],
   },
   TRANSITION_ECOLOGIQUE: {
@@ -40,6 +42,7 @@ export const ROLES = {
       { id: "accueil", label: "Home", pageName: "" },
       { id: "eco-page-1", label: "Emissions & Energy", pageName: "ReportSection1" },
       { id: "eco-page-2", label: "Green Projects", pageName: "ReportSection2" },
+      { id: "streamlit-actor1", label: "Eco Predictions", pageName: "", actorFilter: "actor1" },
     ],
   },
   MOBILITE1: {
@@ -50,6 +53,7 @@ export const ROLES = {
     pages: [
       { id: "accueil", label: "Home", pageName: "" },
       { id: "mob-page-1", label: "Network Performance", pageName: "ReportSection3" },
+      { id: "streamlit-actor2", label: "Mobility Predictions", pageName: "", actorFilter: "actor2" },
     ],
   },
   SECURITE1: {
@@ -60,6 +64,7 @@ export const ROLES = {
     pages: [
       { id: "accueil", label: "Home", pageName: "" },
       { id: "sec-page-1", label: "Security & Maintenance", pageName: "ReportSection4" },
+      { id: "streamlit-actor3", label: "Security Predictions", pageName: "", actorFilter: "actor3" },
     ],
   },
 };

@@ -1,0 +1,173 @@
+{
+  "name": "ESPRIT ML Gateway — Prediction Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ml-predict",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base-webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "esprit-ml-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─────────────────────────────────────────────\n// Code Node: Feature Mapper & Request Builder\n// ─────────────────────────────────────────────\n// This node:\n//   1. Reads incoming JSON from the webhook\n//   2. Validates the actor and task fields exist\n//   3. Maps/renames incoming keys to the expected feature names\n//   4. Builds the exact payload shape that /predict expects\n// ─────────────────────────────────────────────\n\nconst body = $input.first().json.body || $input.first().json;\n\n// ── Required top-level fields ──────────────────\nconst actor = body.actor;\nconst task  = body.task;\nconst raw   = body.features || body;\n\nif (!actor || !task) {\n  throw new Error('Missing required fields: actor and task must be provided.');\n}\n\n// ── Feature alias maps (client key → model key) ──\n// Add any renamed/aliased features your clients send here.\nconst ALIAS_MAPS = {\n  actor1: {\n    // Example: client sends \"fuel\" but model expects \"type_carburant\"\n    // \"fuel\": \"type_carburant\"\n  },\n  actor2: {\n    // Example: client sends \"trip_count\" but model expects \"nb_trajets\"\n    // \"trip_count\": \"nb_trajets\"\n  },\n  actor3: {\n    // Example: client sends \"event_type\" but model expects \"type_incident\"\n    // \"event_type\": \"type_incident\"\n  }\n};\n\n// Apply alias mapping for the relevant actor\nconst aliasMap = ALIAS_MAPS[actor] || {};\nconst features = {};\n\nfor (const [key, value] of Object.entries(raw)) {\n  // Skip the top-level routing keys if they leaked into features\n  if (key === 'actor' || key === 'task') continue;\n  const mappedKey = aliasMap[key] !== undefined ? aliasMap[key] : key;\n  features[mappedKey] = value;\n}\n\n// ── Build final payload ────────────────────────\nconst payload = { actor, task, features };\n\nreturn [{ json: { payload, actor, task } }];"
+      },
+      "id": "code-feature-mapper",
+      "name": "Feature Mapper",
+      "type": "n8n-nodes-base-code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:8000/predict",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.payload) }}",
+        "options": {
+          "timeout": 30000,
+          "fullResponse": true,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "http-predict",
+      "name": "POST /predict",
+      "type": "n8n-nodes-base-httpRequest",
+      "typeVersion": 4,
+      "position": [680, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-status",
+              "leftValue": "={{ $json.body?.status || $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-success-branch",
+      "name": "Success?",
+      "type": "n8n-nodes-base-if",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─────────────────────────────────────────────\n// Success path: normalise and forward the response\n// ─────────────────────────────────────────────\nconst resp = $input.first().json.body || $input.first().json;\n\nreturn [{\n  json: {\n    status:      resp.status,\n    actor:       resp.actor,\n    task:        resp.task,\n    prediction:  resp.prediction,\n    latency_ms:  resp.latency_ms,\n    metadata:    resp.metadata || {}\n  }\n}];"
+      },
+      "id": "code-success-handler",
+      "name": "Format Success",
+      "type": "n8n-nodes-base-code",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─────────────────────────────────────────────\n// Error path: extract detail from FastAPI error\n// ─────────────────────────────────────────────\nconst item = $input.first();\nconst resp = item.json.body || item.json;\nconst statusCode = item.json.statusCode || 'unknown';\n\nconst errorDetail =\n  resp.detail ||\n  item.error?.message ||\n  'Unknown error from ML backend';\n\nconst actor = item.json.actor || 'unknown';\nconst task  = item.json.task  || 'unknown';\n\n// Log to n8n execution output for debugging\nconsole.error(`[ML Gateway Error] actor=${actor} task=${task} status=${statusCode} detail=${errorDetail}`);\n\nreturn [{\n  json: {\n    status:     'error',\n    actor,\n    task,\n    http_status: statusCode,\n    error:      errorDetail,\n    timestamp:  new Date().toISOString()\n  }\n}];"
+      },
+      "id": "code-error-handler",
+      "name": "Handle Error",
+      "type": "n8n-nodes-base-code",
+      "typeVersion": 2,
+      "position": [1120, 420]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-success",
+      "name": "Return Success Response",
+      "type": "n8n-nodes-base-respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 422
+        }
+      },
+      "id": "respond-error",
+      "name": "Return Error Response",
+      "type": "n8n-nodes-base-respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 420]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Feature Mapper", "type": "main", "index": 0 }]
+      ]
+    },
+    "Feature Mapper": {
+      "main": [
+        [{ "node": "POST /predict", "type": "main", "index": 0 }]
+      ]
+    },
+    "POST /predict": {
+      "main": [
+        [{ "node": "Success?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Success?": {
+      "main": [
+        [{ "node": "Format Success",  "type": "main", "index": 0 }],
+        [{ "node": "Handle Error",    "type": "main", "index": 0 }]
+      ]
+    },
+    "Format Success": {
+      "main": [
+        [{ "node": "Return Success Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Handle Error": {
+      "main": [
+        [{ "node": "Return Error Response", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "esprit-ml-gateway"
+  }
+}

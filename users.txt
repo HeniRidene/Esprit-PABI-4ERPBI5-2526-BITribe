@@ -13,3 +13,9 @@ Password: safety2024
 Directeur Mobilité
 Email: emnabaya.benromdhane@esprit.tn
 Password: mobility2024
+
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; & "Esprit-PABI-4ERPBI5-2526-BITribe/STARTUP.ps1"
+
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; & "C:\Users\sbiss\OneDrive - ESPRIT\Desktop\Esprit-PABI-4ERPBI5-2526-BITribe\STARTUP.ps1"

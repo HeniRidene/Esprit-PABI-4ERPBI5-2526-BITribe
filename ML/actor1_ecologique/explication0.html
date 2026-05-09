@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actor 1 - Ecological Impacts Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a; /* Slate 900 */
+            --surface-color: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --surface-hover: rgba(51, 65, 85, 0.8);
+            --primary: #38bdf8; /* Light Blue 400 */
+            --secondary: #818cf8; /* Indigo 400 */
+            --accent: #10b981; /* Emerald 500 */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--surface-hover);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 3rem 4rem;
+            max-width: 1400px;
+        }
+
+        header {
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        /* Sections */
+        section {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            scroll-margin-top: 2rem;
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 15px 40px -10px rgba(56, 189, 248, 0.2);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin: 1.5rem 0 0.5rem 0;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        /* Value Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .metric-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Image Placeholder / Descriptions */
+        .image-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            border: 1px dashed var(--secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .image-box i {
+            color: var(--secondary);
+            width: 48px;
+            height: 48px;
+        }
+        
+        .image-desc {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .code-block {
+            background: #000;
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            border: 1px solid #333;
+        }
+
+        ul.feature-list {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        ul.feature-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        ul.feature-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            main { margin-left: 0; padding: 2rem; }
+            aside { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo">
+            <i data-feather="leaf"></i>
+            Eco-Analytics
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#loading"><i data-feather="database"></i> 1. Data Loading</a></li>
+                <li><a href="#features"><i data-feather="cpu"></i> 2. Feature Engineering</a></li>
+                <li><a href="#regression"><i data-feather="trending-up"></i> 3. Regression Models</a></li>
+                <li><a href="#clustering"><i data-feather="pie-chart"></i> 4. Clustering</a></li>
+                <li><a href="#timeseries"><i data-feather="clock"></i> 5. Time Series</a></li>
+                <li><a href="#insights"><i data-feather="briefcase"></i> 6. Business Insights</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <h1>Actor 1: Ecological Impact Pipeline</h1>
+            <p class="subtitle">A detailed breakdown of the `actor1_ecologique.ipynb` notebook logic, models, and outputs.</p>
+        </header>
+
+        <section id="loading">
+            <h2><i data-feather="database"></i> 1. Data Loading</h2>
+            <p><strong>Code Logic:</strong> The notebook begins by importing essential libraries (Pandas, Numpy, plotting libraries, XGBoost, etc.) and initializing the filesystem path. It loads the core dataset via a merge between the <code>fact_impact_territorial.csv</code> table and dimension tables (<code>dim_temps.csv</code>, <code>dim_zone.csv</code>). It also handles data sanitization by removing phantom/invalid zones and inspecting the memory footprint.</p>
+            <p><strong>Image Output:</strong> No visualization generated in this cell. It strictly prepares the dataset for downstream tasks.</p>
+        </section>
+
+        <section id="features">
+            <h2><i data-feather="cpu"></i> 2. Feature Engineering</h2>
+            <p><strong>Code Logic:</strong> Critical preprocessing steps are executed here. The notebook eliminates null values across target features (<code>co2_kg</code>, <code>aqi_index</code>, <code>energie_kwh</code>). Next, categorical variables like operational zones and transportation lines are ordinalized/encoded. To capture temporal trends, moving averages and lag features (e.g., <code>co2_lag1</code>) are synthetically generated.</p>
+            
+            <div class="image-box">
+                <i data-feather="grid"></i>
+                <div class="image-desc">Output Image: Feature Correlation Matrix Heatmap</div>
+                <p style="margin: 0; font-size: 0.95rem;">A Seaborn heatmap showing linear correlations between variables. It highlights collinearity (e.g., strong links between CO2 and energy consumption) allowing us to drop redundant predictors.</p>
+            </div>
+        </section>
+
+        <section id="regression">
+            <h2><i data-feather="trending-up"></i> 3. Regression (CO2 & Energy)</h2>
+            <p><strong>Code Logic:</strong> The goal here is strict estimation of <code>co2_kg</code> and <code>energie_kwh</code>. The pipeline uses two main algorithms:</p>
+            <ul class="feature-list">
+                <li><strong>Lasso Regression:</strong> Used as a sparse, L1-regularized baseline. Standard scaling is applied beforehand.</li>
+                <li><strong>XGBoost Regression:</strong> A gradient-boosting approach heavily tuned using GridSearchCV on historical lag features.</li>
+            </ul>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Energy R² (XGBoost)</div>
+                    <div class="metric-value">0.71</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">CO2 R² (XGBoost)</div>
+                    <div class="metric-value">0.20</div>
+                </div>
+            </div>
+            <p><em>Note: The CO2 R² is low because monthly aggregation masks high-frequency hourly emission spikes.</em></p>
+
+            <div class="image-box">
+                <i data-feather="bar-chart-2"></i>
+                <div class="image-desc">Output Image: Residual Plots (XGBoost vs Lasso)</div>
+                <p style="margin: 0; font-size: 0.95rem;">Two side-by-side scatter plots showing Predict vs. Actuals/Residuals. These visualize the homoscedasticity of the errors. XGBoost visually compresses residuals much tighter to the zero-line than Lasso for the Energy predictions.</p>
+            </div>
+        </section>
+
+        <section id="clustering">
+            <h2><i data-feather="pie-chart"></i> 4. Clustering Analysis</h2>
+            <p><strong>Code Logic:</strong> Exploring spatial profiles without labeled targets natively using K-Means and DBSCAN. The algorithms parse multidimensional pollution vectors per zone (<code>pm25</code>, <code>no2</code>, <code>co2_kg</code>). The workflow computes Elbow inertia and Silhouette scores across K=[2..8] to pinpoint the mathematically optimal cluster configuration.</p>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Best K (K-Means)</div>
+                    <div class="metric-value">k = 2</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Silhouette Score</div>
+                    <div class="metric-value">0.32</div>
+                </div>
+            </div>
+
+            <div class="image-box">
+                <i data-feather="layers"></i>
+                <div class="image-desc">Output Image 1: Elbow and Silhouette Curve</div>
+                <p style="margin: 0; font-size: 0.95rem;">Line charts indicating the trade-off between inertia and cluster distinctness. Both metrics agree on k=2 as optimal.</p>
+            </div>
+
+            <div class="image-box">
+                <i data-feather="map"></i>
+                <div class="image-desc">Output Image 2: 2D PCA Cluster Map</div>
+                <p style="margin: 0; font-size: 0.95rem;">A scatter plot mapping high-dimensional zone features to 2 principal components. Zones are colored by their K-Means assignments, clearly displaying two distinct "Pollution Profiles" (e.g. Urban Core vs Suburban outskirts).</p>
+            </div>
+        </section>
+
+        <section id="timeseries">
+            <h2><i data-feather="clock"></i> 5. Time Series Forecasting</h2>
+            <p><strong>Code Logic:</strong> Forecasting AQI (Air Quality Index) specifically for Zone 1. The notebook isolates the zone, filters the indices chronologically, and subjects the series to the <strong>Augmented Dickey-Fuller (ADF)</strong> test to mathematically confirm stationarity. It then trains two temporal statistical models: <strong>SARIMA</strong> (classical) vs <strong>Prophet</strong> (Facebook's additive model).</p>
+            
+            <div class="image-box">
+                <i data-feather="activity"></i>
+                <div class="image-desc">Output Image 1: Seasonal Decomposition</div>
+                <p style="margin: 0; font-size: 0.95rem;">A stacked 4-panel chart showing Observed, Trend, Seasonal, and Residuals. Shows clear cyclic behaviors in AQI spikes corresponding to months of the year.</p>
+            </div>
+
+            <div class="image-box">
+                <i data-feather="trending-up"></i>
+                <div class="image-desc">Output Image 2: Forecast Comparison</div>
+                <p style="margin: 0; font-size: 0.95rem;">Displays Historical AQI along with future predictions mapped via SARIMA and Prophet. Prophet achieves a superior <strong>MAE of 1.92</strong> on a 3-step holdout, outperforming classical SARIMA.</p>
+            </div>
+        </section>
+
+        <section id="insights">
+            <h2><i data-feather="briefcase"></i> 6. Business Insights</h2>
+            <p><strong>Conclusion:</strong> The notebook concludes by weaving model outputs into actionable strategy. It validates that XGBoost performs excellently on Energy predictions (R²=0.71) but struggles with CO2 (R²=0.20) due to temporal granularity loss. K-Means (Silhouette 0.32) establishes two distinct intervention zones for traffic management. The predictive capability of Prophet gives policymakers a functional gauge for short-term (1-3 months) localized AQI spikes.</p>
+        </section>
+
+    </main>
+
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+
+        // Highlight active sidebar links on scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('nav a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

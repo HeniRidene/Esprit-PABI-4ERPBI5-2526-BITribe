@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+scikit-learn
+xgboost
+numpy
+pandas
+mlflow
+prophet
+prometheus-client
+httpx
+scipy

@@ -1,9 +1,12 @@
 "use client";
 
 import { useAuth, ROLES } from "@/context/AuthContext";
+import { isPbiLoaded } from "./DashboardMain";
+import { useState, useEffect } from "react";
 import {
   Home, BarChart3, FolderTree, ShieldCheck, Leaf, Bus,
-  HelpCircle, Headphones, LogOut, ChevronRight, LayoutDashboard
+  HelpCircle, Headphones, LogOut, ChevronRight, LayoutDashboard,
+  Settings, Brain, FlaskConical,
 } from "lucide-react";
 
 /* Map page IDs to icons */
@@ -13,11 +16,40 @@ const pageIcons = {
   "eco-page-2": FolderTree,
   "mob-page-1": Bus,
   "sec-page-1": ShieldCheck,
+  "mlops": Settings,
+  "streamlit": Brain,
+  "streamlit-actor1": FlaskConical,
+  "streamlit-actor2": Bus,
+  "streamlit-actor3": ShieldCheck,
 };
+
+/* Pages that have Power BI embeds and show load-status dots */
+const PBI_PAGE_IDS = new Set(["eco-page-1", "eco-page-2", "mob-page-1", "sec-page-1"]);
 
 export default function Sidebar() {
   const { user, logout, activePage, handlePageChange } = useAuth();
   const pagesToDisplay = user ? ROLES[user.role].pages : ROLES.DIRECTOR.pages;
+
+  // Track which PBI pages have loaded successfully (via localStorage)
+  const [loadedPages, setLoadedPages] = useState(() => {
+    const set = new Set();
+    if (typeof window !== "undefined") {
+      PBI_PAGE_IDS.forEach((id) => { if (isPbiLoaded(id)) set.add(id); });
+    }
+    return set;
+  });
+
+  useEffect(() => {
+    const handler = (e) => {
+      setLoadedPages((prev) => {
+        const next = new Set(prev);
+        next.add(e.detail.pageId);
+        return next;
+      });
+    };
+    window.addEventListener("pbi-loaded", handler);
+    return () => window.removeEventListener("pbi-loaded", handler);
+  }, []);
 
   return (
     <aside
@@ -40,31 +72,56 @@ export default function Sidebar() {
       {/* Main Nav — pages from role config */}
       <nav className="flex-1 space-y-1.5">
         <p className="px-3 text-[11px] font-bold text-outline uppercase tracking-[0.1em] mb-4">Analytics Dashboard</p>
-        {pagesToDisplay.map((page) => {
+        {pagesToDisplay.map((page, idx) => {
           const Icon = pageIcons[page.id] || BarChart3;
           const isActive = activePage?.id === page.id;
+          const isMLPage = page.id === "mlops" || page.id.startsWith("streamlit");
+          const prevPage = pagesToDisplay[idx - 1];
+          const isFirstMLPage = isMLPage && (!prevPage || (prevPage.id !== "mlops" && !prevPage.id.startsWith("streamlit")));
           return (
-            <button
-              key={page.id}
-              id={`nav-${page.id}`}
-              onClick={() => handlePageChange(page)}
-              className={`w-full flex items-center justify-between px-3 py-3 rounded-xl transition-all duration-200 group cursor-pointer
-                ${isActive
-                  ? "bg-primary text-white"
-                  : "text-outline hover:bg-surface hover:text-primary"
-                }
-              `}
-            >
-              <div className="flex items-center gap-3">
-                <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-outline group-hover:text-primary"}`} />
-                <span className={`text-[14px] font-medium tracking-tight`}>
-                  {page.label}
-                </span>
-              </div>
-              {!isActive && (
-                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div key={page.id}>
+              {isFirstMLPage && (
+                <div className="pt-4 pb-2">
+                  <hr className="border-outline-variant/30 mb-3" />
+                  <p className="px-3 text-[11px] font-bold text-outline uppercase tracking-[0.1em]">
+                    ML &amp; Operations
+                  </p>
+                </div>
               )}
-            </button>
+              <button
+                id={`nav-${page.id}`}
+                onClick={() => handlePageChange(page)}
+                className={`w-full flex items-center justify-between px-3 py-3 rounded-xl transition-all duration-200 group cursor-pointer
+                  ${isActive
+                    ? "bg-primary text-white"
+                    : "text-outline hover:bg-surface hover:text-primary"
+                  }
+                `}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-outline group-hover:text-primary"}`} />
+                  <span className={`text-[14px] font-medium tracking-tight`}>
+                    {page.label}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {/* PBI load-status dot — only for Power BI pages */}
+                  {PBI_PAGE_IDS.has(page.id) && !isActive && (
+                    <span
+                      title={loadedPages.has(page.id) ? "Report loaded" : "Not yet loaded"}
+                      className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors duration-300"
+                      style={{
+                        backgroundColor: loadedPages.has(page.id) ? "#22c55e" : "#c8c8d0",
+                        boxShadow: loadedPages.has(page.id) ? "0 0 0 2px rgba(34,197,94,0.2)" : "none",
+                      }}
+                    />
+                  )}
+                  {!isActive && (
+                    <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  )}
+                </div>
+              </button>
+            </div>
           );
         })}
       </nav>

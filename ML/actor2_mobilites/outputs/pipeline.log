@@ -1,0 +1,23 @@
+2026-05-08 21:59:41,117 [INFO] >>> STEP: Data Loader
+2026-05-08 21:59:41,118 [INFO] === DATA LOADER v1 — Actor 2 Mobilités ===
+2026-05-08 21:59:41,127 [INFO] Loaded facts → shape: (4389, 19)
+2026-05-08 21:59:41,162 [INFO] Loaded dim_temps → shape: (35063, 10)
+2026-05-08 21:59:41,170 [INFO] After fact ⊕ dim_temps merge → shape: (4389, 28)
+2026-05-08 21:59:41,173 [INFO] annule: pos=78 (1.78%)  neg=4311  total=4389
+2026-05-08 21:59:41,175 [INFO] Null counts after load:
+stress_1_5    131
+2026-05-08 21:59:41,175 [INFO] Final clean shape: (4389, 19)
+2026-05-08 21:59:41,176 [INFO]     ✅ Data Loader — 0.1s
+2026-05-08 21:59:41,177 [INFO] >>> STEP: Feature Engineering
+2026-05-08 21:59:41,177 [INFO] === FEATURE ENGINEERING v1 — Actor 2 Mobilités ===
+2026-05-08 21:59:41,181 [INFO] Imputed 'stress_1_5': 131 → 0 nulls
+2026-05-08 21:59:41,197 [INFO] Class imbalance: pos=78 neg=4311 → scale_pos_weight=55.27
+2026-05-08 21:59:41,217 [INFO] Feature engineering complete. df_ml: (4389, 27)  df_ts: (4388, 3)
+2026-05-08 21:59:41,217 [INFO]     ✅ Feature Engineering — 0.0s
+2026-05-08 21:59:42,231 [INFO] >>> STEP: Regression (Passenger Load)
+2026-05-08 21:59:42,232 [INFO] === REGRESSION — Passenger Load (charge_estimee) ===
+2026-05-08 21:59:42,234 [INFO] Regression set: 4389 rows (0 dropped for NaN)
+2026-05-08 21:59:42,236 [INFO] Split: train=3511  test=878
+2026-05-08 21:59:42,242 [WARNING] Missing features (skipped): {'zone_hour_charge', 'line_charge_mean', 'weekend_x_zone', 'hour_x_congestion'}
+2026-05-08 21:59:42,242 [INFO] Training on 9 features: ['zone_encoded', 'line_encoded', 'mode_encoded', 'hour', 'rush_hour', 'is_weekend', 'congestion_index', 'vitesse_kmh', 'temps_trajet_min']
+2026-05-08 21:59:42,243 [INFO] 5-Fold CV on training set...

@@ -1,0 +1,26 @@
+entity,label,frequency
+TCL,MISC,7
+Bonjour,MISC,5
+RATP,ORG,5
+Pass,LOC,4
+RTM,ORG,3
+de France,LOC,3
+j’,LOC,3
+Lyon,LOC,2
+IDF,ORG,2
+Amende,LOC,2
+qu’,MISC,2
+c’,MISC,2
+Tram,LOC,2
+Apres,MISC,1
+Agence SNCF,ORG,1
+Annulation,MISC,1
+Applie,LOC,1
+Application IDF mobilité,ORG,1
+Chauffeurs,MISC,1
+Cher,LOC,1
+Client honnete,LOC,1
+Complexité,LOC,1
+Compliqué,LOC,1
+Conducteur,LOC,1
+C’,MISC,1
