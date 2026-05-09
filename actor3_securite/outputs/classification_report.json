@@ -1,0 +1,38 @@
+{
+    "model": "RandomForestClassifier — Accident Severity",
+    "n_classes": 2,
+    "class_merge_note": "Classes 1+2 merged (mortel+grave → serious) because nb_mortels=0 in all rows. Binary classification: 0=Aucun incident, 1=Accident grave/mortel.",
+    "cv_f1_macro": 1.0,
+    "cv_f1_std": 0.0,
+    "test_fold": {
+        "f1_macro": 1.0,
+        "f1_weighted": 1.0,
+        "auc_roc": 1.0,
+        "confusion_matrix": [
+            [
+                376,
+                0
+            ],
+            [
+                0,
+                6
+            ]
+        ]
+    },
+    "feature_importances": {
+        "gravite_index": 0.5194,
+        "has_accident": 0.2745,
+        "mois": 0.0738,
+        "crime_rate_scaled": 0.0534,
+        "taux_criminalite": 0.0519,
+        "volume_crimes": 0.0185,
+        "zone_encoded": 0.0059,
+        "usagers_vulnerables": 0.0018,
+        "annee": 0.0006,
+        "mode_encoded": 0.0002
+    },
+    "class_distribution": {
+        "0": 1883,
+        "1": 28
+    }
+}

@@ -1,0 +1,409 @@
+2026-05-08 21:52:04,628 [INFO] >>> STEP 1: Loading and Cleaning Data
+2026-05-08 21:52:05,313 [INFO] === DATA LOADER v3 ===
+2026-05-08 21:52:05,369 [INFO] Loaded facts  → shape: (20650, 27)
+2026-05-08 21:52:05,413 [INFO] Loaded dim_temps → shape: (35063, 10)
+2026-05-08 21:52:05,423 [INFO] After facts ⊕ dim_temps merge → shape: (20650, 36)
+2026-05-08 21:52:05,429 [INFO] Dedup removed 18585 rows → 2065 rows remain
+2026-05-08 21:52:05,436 [INFO] Dropped 154 phantom-zone rows → 1911 rows
+2026-05-08 21:52:05,438 [INFO] Dropped 0 rows with co2_kg <= 0 → 1911 rows
+2026-05-08 21:52:05,438 [INFO] Final clean shape: (1911, 22)
+2026-05-08 21:52:05,439 [INFO] No nulls in the clean DataFrame.
+2026-05-08 21:52:05,440 [INFO] Zero counts in targets: {'co2_kg': 0, 'energie_kwh': 0, 'aqi_index': 0}
+2026-05-08 21:52:05,441 [INFO] CO2 range: [0.30, 622.51]  median=4.61
+2026-05-08 21:52:05,442 [INFO]     Clean data shape: (1911, 22)
+2026-05-08 21:52:05,442 [INFO] >>> STEP 2: Feature Engineering
+2026-05-08 21:52:06,337 [INFO] === FEATURE ENGINEERING v3 ===
+2026-05-08 21:52:06,349 [INFO] Dropped 0 rows with 0/NaN in targets → 1911 rows
+2026-05-08 21:52:06,384 [INFO] Dropped 40 rows with missing lag-1 features → 1871 rows
+2026-05-08 21:52:06,395 [INFO] Feature engineering complete. df_reg: (1871, 42)  df_cluster: (1871, 44)  df_prophet: (1911, 23)
+2026-05-08 21:52:06,395 [INFO]     df_reg=(1871, 42)  df_cluster=(1871, 44)  df_prophet=(1911, 23)
+2026-05-08 21:52:06,395 [INFO] >>> STEP 3: XGBoost Regression (CO2 + Energy)
+2026-05-08 21:52:06,866 [INFO] === XGBOOST REGRESSION v5 (per-mode CO2 + combined Energy) ===
+2026-05-08 21:52:06,869 [INFO] Train: 1551 rows  Test: 320 rows
+2026-05-08 21:52:06,869 [INFO] Training per-mode CO2 regressors...
+2026-05-08 21:52:08,417 [INFO]   Mode 2: RMSE=203.07 kg  R²=-0.5494  (best_iter=25)
+2026-05-08 21:52:08,467 [INFO]   Mode 3: RMSE=1.30 kg  R²=-0.0412  (best_iter=0)
+2026-05-08 21:52:08,557 [INFO]   Mode 5: RMSE=0.97 kg  R²=-0.0403  (best_iter=60)
+2026-05-08 21:52:08,634 [INFO]   Mode 6: RMSE=57.16 kg  R²=-0.6144  (best_iter=37)
+2026-05-08 21:52:08,644 [INFO] [TEST ALL MODES] CO2 RMSE=105.49 kg  MAE=56.98  R²=0.1952
+2026-05-08 21:52:08,645 [INFO] Training combined Energy regressor...
+2026-05-08 21:52:08,776 [INFO] [TEST] Energy RMSE=20.92 kWh  MAE=16.23  R²=0.7133  (best_iter=85)
+2026-05-08 21:52:08,776 [INFO] Training fallback combined CO2 model (for future predictions)...
+2026-05-08 21:52:08,979 [INFO] Combined models saved → outputs/
+2026-05-08 21:52:08,981 [INFO] 5-Fold CV on training set (combined CO2 + Energy)...
+2026-05-08 21:52:11,150 [INFO] CO2    CV RMSE (log): 1.3041 ± 0.0389
+2026-05-08 21:52:11,150 [INFO] Energy CV RMSE (log): 0.3936 ± 0.0180
+2026-05-08 21:52:12,609 [INFO] Plots saved → outputs/
+2026-05-08 21:52:12,609 [INFO] >>> STEP 4: Prophet Time Series (per zone, 24-month horizon)
+2026-05-08 21:52:12,794 [INFO] Initializing Prophet Time Series Pipeline v2 (horizon=24 months)...
+2026-05-08 21:52:12,801 [INFO] Found 10 unique zones.
+2026-05-08 21:52:12,801 [INFO]   → Zone 1
+2026-05-08 21:52:13,035 [INFO] Chain [1] start processing
+2026-05-08 21:52:13,253 [INFO] Chain [1] done processing
+2026-05-08 21:52:13,424 [INFO] Chain [1] start processing
+2026-05-08 21:52:13,718 [INFO] Chain [1] done processing
+2026-05-08 21:52:13,895 [INFO] Chain [1] start processing
+2026-05-08 21:52:14,312 [INFO] Chain [1] done processing
+2026-05-08 21:52:14,319 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=4.588)
+2026-05-08 21:52:14,874 [INFO] Chain [1] start processing
+2026-05-08 21:52:15,032 [INFO] Chain [1] done processing
+2026-05-08 21:52:15,223 [INFO] Chain [1] start processing
+2026-05-08 21:52:15,564 [INFO] Chain [1] done processing
+2026-05-08 21:52:15,722 [INFO] Chain [1] start processing
+2026-05-08 21:52:16,193 [INFO] Chain [1] done processing
+2026-05-08 21:52:16,203 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=3.635)
+2026-05-08 21:52:16,813 [INFO] Chain [1] start processing
+2026-05-08 21:52:16,965 [INFO] Chain [1] done processing
+2026-05-08 21:52:17,183 [INFO] Chain [1] start processing
+2026-05-08 21:52:17,415 [INFO] Chain [1] done processing
+2026-05-08 21:52:17,565 [INFO] Chain [1] start processing
+2026-05-08 21:52:17,761 [INFO] Chain [1] done processing
+2026-05-08 21:52:17,771 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=52.089)
+2026-05-08 21:52:18,423 [INFO] Chain [1] start processing
+2026-05-08 21:52:18,568 [INFO] Chain [1] done processing
+2026-05-08 21:52:18,748 [INFO] Chain [1] start processing
+2026-05-08 21:52:18,892 [INFO] Chain [1] done processing
+2026-05-08 21:52:19,044 [INFO] Chain [1] start processing
+2026-05-08 21:52:19,217 [INFO] Chain [1] done processing
+2026-05-08 21:52:19,225 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=9.748)
+2026-05-08 21:52:19,668 [INFO]   → Zone 2
+2026-05-08 21:52:19,781 [INFO] Chain [1] start processing
+2026-05-08 21:52:19,993 [INFO] Chain [1] done processing
+2026-05-08 21:52:20,159 [INFO] Chain [1] start processing
+2026-05-08 21:52:20,430 [INFO] Chain [1] done processing
+2026-05-08 21:52:20,593 [INFO] Chain [1] start processing
+2026-05-08 21:52:20,763 [INFO] Chain [1] done processing
+2026-05-08 21:52:20,773 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=1.415)
+2026-05-08 21:52:21,313 [INFO] Chain [1] start processing
+2026-05-08 21:52:21,477 [INFO] Chain [1] done processing
+2026-05-08 21:52:21,653 [INFO] Chain [1] start processing
+2026-05-08 21:52:21,892 [INFO] Chain [1] done processing
+2026-05-08 21:52:22,060 [INFO] Chain [1] start processing
+2026-05-08 21:52:22,316 [INFO] Chain [1] done processing
+2026-05-08 21:52:22,326 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=2.494)
+2026-05-08 21:52:22,968 [INFO] Chain [1] start processing
+2026-05-08 21:52:23,122 [INFO] Chain [1] done processing
+2026-05-08 21:52:23,297 [INFO] Chain [1] start processing
+2026-05-08 21:52:23,576 [INFO] Chain [1] done processing
+2026-05-08 21:52:23,764 [INFO] Chain [1] start processing
+2026-05-08 21:52:23,927 [INFO] Chain [1] done processing
+2026-05-08 21:52:23,942 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=39.420)
+2026-05-08 21:52:24,507 [INFO] Chain [1] start processing
+2026-05-08 21:52:24,700 [INFO] Chain [1] done processing
+2026-05-08 21:52:24,910 [INFO] Chain [1] start processing
+2026-05-08 21:52:25,134 [INFO] Chain [1] done processing
+2026-05-08 21:52:25,321 [INFO] Chain [1] start processing
+2026-05-08 21:52:25,494 [INFO] Chain [1] done processing
+2026-05-08 21:52:25,504 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=10.684)
+2026-05-08 21:52:26,155 [INFO]   → Zone 3
+2026-05-08 21:52:26,264 [INFO] Chain [1] start processing
+2026-05-08 21:52:26,485 [INFO] Chain [1] done processing
+2026-05-08 21:52:26,706 [INFO] Chain [1] start processing
+2026-05-08 21:52:27,125 [INFO] Chain [1] done processing
+2026-05-08 21:52:27,302 [INFO] Chain [1] start processing
+2026-05-08 21:52:27,553 [INFO] Chain [1] done processing
+2026-05-08 21:52:27,562 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=3.421)
+2026-05-08 21:52:28,102 [INFO] Chain [1] start processing
+2026-05-08 21:52:28,368 [INFO] Chain [1] done processing
+2026-05-08 21:52:28,531 [INFO] Chain [1] start processing
+2026-05-08 21:52:29,139 [INFO] Chain [1] done processing
+2026-05-08 21:52:29,362 [INFO] Chain [1] start processing
+2026-05-08 21:52:29,952 [INFO] Chain [1] done processing
+2026-05-08 21:52:29,967 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=1.653)
+2026-05-08 21:52:30,544 [INFO] Chain [1] start processing
+2026-05-08 21:52:30,749 [INFO] Chain [1] done processing
+2026-05-08 21:52:30,946 [INFO] Chain [1] start processing
+2026-05-08 21:52:31,196 [INFO] Chain [1] done processing
+2026-05-08 21:52:31,370 [INFO] Chain [1] start processing
+2026-05-08 21:52:31,601 [INFO] Chain [1] done processing
+2026-05-08 21:52:31,610 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=40.416)
+2026-05-08 21:52:32,238 [INFO] Chain [1] start processing
+2026-05-08 21:52:32,436 [INFO] Chain [1] done processing
+2026-05-08 21:52:32,624 [INFO] Chain [1] start processing
+2026-05-08 21:52:32,855 [INFO] Chain [1] done processing
+2026-05-08 21:52:33,054 [INFO] Chain [1] start processing
+2026-05-08 21:52:33,359 [INFO] Chain [1] done processing
+2026-05-08 21:52:33,373 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=8.780)
+2026-05-08 21:52:33,880 [INFO]   → Zone 4
+2026-05-08 21:52:33,980 [INFO] Chain [1] start processing
+2026-05-08 21:52:34,204 [INFO] Chain [1] done processing
+2026-05-08 21:52:34,378 [INFO] Chain [1] start processing
+2026-05-08 21:52:34,764 [INFO] Chain [1] done processing
+2026-05-08 21:52:34,920 [INFO] Chain [1] start processing
+2026-05-08 21:52:35,307 [INFO] Chain [1] done processing
+2026-05-08 21:52:35,320 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=4.323)
+2026-05-08 21:52:35,943 [INFO] Chain [1] start processing
+2026-05-08 21:52:36,183 [INFO] Chain [1] done processing
+2026-05-08 21:52:36,378 [INFO] Chain [1] start processing
+2026-05-08 21:52:36,866 [INFO] Chain [1] done processing
+2026-05-08 21:52:37,049 [INFO] Chain [1] start processing
+2026-05-08 21:52:37,381 [INFO] Chain [1] done processing
+2026-05-08 21:52:37,401 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=2.466)
+2026-05-08 21:52:37,985 [INFO] Chain [1] start processing
+2026-05-08 21:52:38,112 [INFO] Chain [1] done processing
+2026-05-08 21:52:38,311 [INFO] Chain [1] start processing
+2026-05-08 21:52:38,471 [INFO] Chain [1] done processing
+2026-05-08 21:52:38,673 [INFO] Chain [1] start processing
+2026-05-08 21:52:38,854 [INFO] Chain [1] done processing
+2026-05-08 21:52:38,866 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=63.890)
+2026-05-08 21:52:39,508 [INFO] Chain [1] start processing
+2026-05-08 21:52:39,773 [INFO] Chain [1] done processing
+2026-05-08 21:52:39,962 [INFO] Chain [1] start processing
+2026-05-08 21:52:40,306 [INFO] Chain [1] done processing
+2026-05-08 21:52:40,486 [INFO] Chain [1] start processing
+2026-05-08 21:52:40,726 [INFO] Chain [1] done processing
+2026-05-08 21:52:40,738 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=7.403)
+2026-05-08 21:52:41,220 [INFO]   → Zone 5
+2026-05-08 21:52:41,341 [INFO] Chain [1] start processing
+2026-05-08 21:52:41,643 [INFO] Chain [1] done processing
+2026-05-08 21:52:41,799 [INFO] Chain [1] start processing
+2026-05-08 21:52:42,168 [INFO] Chain [1] done processing
+2026-05-08 21:52:42,310 [INFO] Chain [1] start processing
+2026-05-08 21:52:42,520 [INFO] Chain [1] done processing
+2026-05-08 21:52:42,536 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=3.881)
+2026-05-08 21:52:43,028 [INFO] Chain [1] start processing
+2026-05-08 21:52:43,314 [INFO] Chain [1] done processing
+2026-05-08 21:52:43,524 [INFO] Chain [1] start processing
+2026-05-08 21:52:44,001 [INFO] Chain [1] done processing
+2026-05-08 21:52:44,193 [INFO] Chain [1] start processing
+2026-05-08 21:52:44,365 [INFO] Chain [1] done processing
+2026-05-08 21:52:44,380 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=3.578)
+2026-05-08 21:52:45,043 [INFO] Chain [1] start processing
+2026-05-08 21:52:45,197 [INFO] Chain [1] done processing
+2026-05-08 21:52:45,387 [INFO] Chain [1] start processing
+2026-05-08 21:52:45,637 [INFO] Chain [1] done processing
+2026-05-08 21:52:45,804 [INFO] Chain [1] start processing
+2026-05-08 21:52:46,144 [INFO] Chain [1] done processing
+2026-05-08 21:52:46,160 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=61.367)
+2026-05-08 21:52:46,917 [INFO] Chain [1] start processing
+2026-05-08 21:52:47,101 [INFO] Chain [1] done processing
+2026-05-08 21:52:47,303 [INFO] Chain [1] start processing
+2026-05-08 21:52:47,831 [INFO] Chain [1] done processing
+2026-05-08 21:52:48,025 [INFO] Chain [1] start processing
+2026-05-08 21:52:48,369 [INFO] Chain [1] done processing
+2026-05-08 21:52:48,383 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=5.822)
+2026-05-08 21:52:48,774 [INFO]   → Zone 6
+2026-05-08 21:52:48,917 [INFO] Chain [1] start processing
+2026-05-08 21:52:49,107 [INFO] Chain [1] done processing
+2026-05-08 21:52:49,289 [INFO] Chain [1] start processing
+2026-05-08 21:52:49,656 [INFO] Chain [1] done processing
+2026-05-08 21:52:49,830 [INFO] Chain [1] start processing
+2026-05-08 21:52:50,042 [INFO] Chain [1] done processing
+2026-05-08 21:52:50,053 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=2.420)
+2026-05-08 21:52:50,783 [INFO] Chain [1] start processing
+2026-05-08 21:52:51,041 [INFO] Chain [1] done processing
+2026-05-08 21:52:51,254 [INFO] Chain [1] start processing
+2026-05-08 21:52:51,728 [INFO] Chain [1] done processing
+2026-05-08 21:52:51,957 [INFO] Chain [1] start processing
+2026-05-08 21:52:52,197 [INFO] Chain [1] done processing
+2026-05-08 21:52:52,212 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=1.718)
+2026-05-08 21:52:52,798 [INFO] Chain [1] start processing
+2026-05-08 21:52:53,062 [INFO] Chain [1] done processing
+2026-05-08 21:52:53,229 [INFO] Chain [1] start processing
+2026-05-08 21:52:53,537 [INFO] Chain [1] done processing
+2026-05-08 21:52:53,742 [INFO] Chain [1] start processing
+2026-05-08 21:52:53,893 [INFO] Chain [1] done processing
+2026-05-08 21:52:53,901 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=30.911)
+2026-05-08 21:52:54,512 [INFO] Chain [1] start processing
+2026-05-08 21:52:54,692 [INFO] Chain [1] done processing
+2026-05-08 21:52:54,862 [INFO] Chain [1] start processing
+2026-05-08 21:52:55,169 [INFO] Chain [1] done processing
+2026-05-08 21:52:55,343 [INFO] Chain [1] start processing
+2026-05-08 21:52:55,727 [INFO] Chain [1] done processing
+2026-05-08 21:52:55,737 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=10.894)
+2026-05-08 21:52:56,222 [INFO]   → Zone 7
+2026-05-08 21:52:56,324 [INFO] Chain [1] start processing
+2026-05-08 21:52:56,453 [INFO] Chain [1] done processing
+2026-05-08 21:52:56,638 [INFO] Chain [1] start processing
+2026-05-08 21:52:56,862 [INFO] Chain [1] done processing
+2026-05-08 21:52:57,047 [INFO] Chain [1] start processing
+2026-05-08 21:52:57,180 [INFO] Chain [1] done processing
+2026-05-08 21:52:57,199 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=2.294)
+2026-05-08 21:52:57,920 [INFO] Chain [1] start processing
+2026-05-08 21:52:58,178 [INFO] Chain [1] done processing
+2026-05-08 21:52:58,337 [INFO] Chain [1] start processing
+2026-05-08 21:52:58,623 [INFO] Chain [1] done processing
+2026-05-08 21:52:58,803 [INFO] Chain [1] start processing
+2026-05-08 21:52:59,035 [INFO] Chain [1] done processing
+2026-05-08 21:52:59,043 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=3.166)
+2026-05-08 21:52:59,659 [INFO] Chain [1] start processing
+2026-05-08 21:52:59,771 [INFO] Chain [1] done processing
+2026-05-08 21:52:59,944 [INFO] Chain [1] start processing
+2026-05-08 21:53:00,138 [INFO] Chain [1] done processing
+2026-05-08 21:53:00,387 [INFO] Chain [1] start processing
+2026-05-08 21:53:00,523 [INFO] Chain [1] done processing
+2026-05-08 21:53:00,532 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=36.891)
+2026-05-08 21:53:01,152 [INFO] Chain [1] start processing
+2026-05-08 21:53:01,443 [INFO] Chain [1] done processing
+2026-05-08 21:53:01,649 [INFO] Chain [1] start processing
+2026-05-08 21:53:02,130 [INFO] Chain [1] done processing
+2026-05-08 21:53:02,307 [INFO] Chain [1] start processing
+2026-05-08 21:53:02,694 [INFO] Chain [1] done processing
+2026-05-08 21:53:02,705 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=3.243)
+2026-05-08 21:53:03,353 [INFO]   → Zone 8
+2026-05-08 21:53:03,468 [INFO] Chain [1] start processing
+2026-05-08 21:53:03,675 [INFO] Chain [1] done processing
+2026-05-08 21:53:03,898 [INFO] Chain [1] start processing
+2026-05-08 21:53:04,121 [INFO] Chain [1] done processing
+2026-05-08 21:53:04,346 [INFO] Chain [1] start processing
+2026-05-08 21:53:04,593 [INFO] Chain [1] done processing
+2026-05-08 21:53:04,604 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=0.677)
+2026-05-08 21:53:05,298 [INFO] Chain [1] start processing
+2026-05-08 21:53:05,681 [INFO] Chain [1] done processing
+2026-05-08 21:53:05,863 [INFO] Chain [1] start processing
+2026-05-08 21:53:06,305 [INFO] Chain [1] done processing
+2026-05-08 21:53:06,478 [INFO] Chain [1] start processing
+2026-05-08 21:53:06,829 [INFO] Chain [1] done processing
+2026-05-08 21:53:06,839 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=2.450)
+2026-05-08 21:53:07,474 [INFO] Chain [1] start processing
+2026-05-08 21:53:07,592 [INFO] Chain [1] done processing
+2026-05-08 21:53:07,794 [INFO] Chain [1] start processing
+2026-05-08 21:53:08,032 [INFO] Chain [1] done processing
+2026-05-08 21:53:08,208 [INFO] Chain [1] start processing
+2026-05-08 21:53:08,376 [INFO] Chain [1] done processing
+2026-05-08 21:53:08,385 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=21.250)
+2026-05-08 21:53:09,041 [INFO] Chain [1] start processing
+2026-05-08 21:53:09,273 [INFO] Chain [1] done processing
+2026-05-08 21:53:09,471 [INFO] Chain [1] start processing
+2026-05-08 21:53:09,700 [INFO] Chain [1] done processing
+2026-05-08 21:53:09,910 [INFO] Chain [1] start processing
+2026-05-08 21:53:10,123 [INFO] Chain [1] done processing
+2026-05-08 21:53:10,132 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=9.377)
+2026-05-08 21:53:10,670 [INFO]   → Zone 9
+2026-05-08 21:53:10,778 [INFO] Chain [1] start processing
+2026-05-08 21:53:11,003 [INFO] Chain [1] done processing
+2026-05-08 21:53:11,325 [INFO] Chain [1] start processing
+2026-05-08 21:53:11,629 [INFO] Chain [1] done processing
+2026-05-08 21:53:11,844 [INFO] Chain [1] start processing
+2026-05-08 21:53:12,074 [INFO] Chain [1] done processing
+2026-05-08 21:53:12,083 [INFO]     Best changepoint_prior_scale=0.05 (holdout MAE=3.308)
+2026-05-08 21:53:12,725 [INFO] Chain [1] start processing
+2026-05-08 21:53:12,950 [INFO] Chain [1] done processing
+2026-05-08 21:53:13,117 [INFO] Chain [1] start processing
+2026-05-08 21:53:13,520 [INFO] Chain [1] done processing
+2026-05-08 21:53:13,726 [INFO] Chain [1] start processing
+2026-05-08 21:53:14,057 [INFO] Chain [1] done processing
+2026-05-08 21:53:14,071 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=0.977)
+2026-05-08 21:53:14,596 [INFO] Chain [1] start processing
+2026-05-08 21:53:14,726 [INFO] Chain [1] done processing
+2026-05-08 21:53:14,888 [INFO] Chain [1] start processing
+2026-05-08 21:53:15,105 [INFO] Chain [1] done processing
+2026-05-08 21:53:15,280 [INFO] Chain [1] start processing
+2026-05-08 21:53:15,576 [INFO] Chain [1] done processing
+2026-05-08 21:53:15,587 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=61.391)
+2026-05-08 21:53:16,090 [INFO] Chain [1] start processing
+2026-05-08 21:53:16,324 [INFO] Chain [1] done processing
+2026-05-08 21:53:16,500 [INFO] Chain [1] start processing
+2026-05-08 21:53:17,094 [INFO] Chain [1] done processing
+2026-05-08 21:53:17,293 [INFO] Chain [1] start processing
+2026-05-08 21:53:17,512 [INFO] Chain [1] done processing
+2026-05-08 21:53:17,522 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=4.906)
+2026-05-08 21:53:18,010 [INFO]   → Zone 10
+2026-05-08 21:53:18,132 [INFO] Chain [1] start processing
+2026-05-08 21:53:18,406 [INFO] Chain [1] done processing
+2026-05-08 21:53:18,595 [INFO] Chain [1] start processing
+2026-05-08 21:53:18,993 [INFO] Chain [1] done processing
+2026-05-08 21:53:19,160 [INFO] Chain [1] start processing
+2026-05-08 21:53:19,428 [INFO] Chain [1] done processing
+2026-05-08 21:53:19,440 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=2.936)
+2026-05-08 21:53:20,003 [INFO] Chain [1] start processing
+2026-05-08 21:53:20,230 [INFO] Chain [1] done processing
+2026-05-08 21:53:20,404 [INFO] Chain [1] start processing
+2026-05-08 21:53:20,729 [INFO] Chain [1] done processing
+2026-05-08 21:53:21,049 [INFO] Chain [1] start processing
+2026-05-08 21:53:21,441 [INFO] Chain [1] done processing
+2026-05-08 21:53:21,450 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=2.577)
+2026-05-08 21:53:21,835 [INFO] Chain [1] start processing
+2026-05-08 21:53:22,006 [INFO] Chain [1] done processing
+2026-05-08 21:53:22,145 [INFO] Chain [1] start processing
+2026-05-08 21:53:22,496 [INFO] Chain [1] done processing
+2026-05-08 21:53:22,639 [INFO] Chain [1] start processing
+2026-05-08 21:53:23,049 [INFO] Chain [1] done processing
+2026-05-08 21:53:23,062 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=25.501)
+2026-05-08 21:53:23,418 [INFO] Chain [1] start processing
+2026-05-08 21:53:23,673 [INFO] Chain [1] done processing
+2026-05-08 21:53:23,798 [INFO] Chain [1] start processing
+2026-05-08 21:53:24,160 [INFO] Chain [1] done processing
+2026-05-08 21:53:24,299 [INFO] Chain [1] start processing
+2026-05-08 21:53:24,756 [INFO] Chain [1] done processing
+2026-05-08 21:53:24,768 [INFO]     Best changepoint_prior_scale=0.3 (holdout MAE=8.804)
+2026-05-08 21:53:25,063 [INFO] Forecasts saved → outputs/prophet_forecasts.csv  shape=(720, 15)
+2026-05-08 21:53:25,065 [INFO] >>> STEP 5: K-Means Zone Clustering
+2026-05-08 21:53:25,171 [INFO] Initializing K-Means Clustering Pipeline v2...
+2026-05-08 21:53:25,177 [INFO] Clustering on 10 unique zones.
+2026-05-08 21:53:25,181 [INFO] Testing K in [2, 3, 4]...
+2026-05-08 21:53:26,906 [INFO]   K=2  Silhouette=0.3107  Inertia=23.62
+2026-05-08 21:53:26,930 [INFO]   K=3  Silhouette=0.2841  Inertia=15.29
+2026-05-08 21:53:26,950 [INFO]   K=4  Silhouette=0.2946  Inertia=9.20
+2026-05-08 21:53:26,951 [INFO] Chosen K=2  (Silhouette=0.3107)
+2026-05-08 21:53:27,113 [INFO]   Cluster 0: High Emission, Clean Air  (CO2=0.95, PM2.5=0.04, Energy=0.88)
+2026-05-08 21:53:27,113 [INFO]   Cluster 1: Clean & Green Zone  (CO2=-0.63, PM2.5=-0.03, Energy=-0.59)
+2026-05-08 21:53:27,376 [INFO] Cluster visualization saved → outputs/zone_clusters.png
+2026-05-08 21:53:27,379 [INFO] Cluster labels saved → outputs/cluster_labels.csv  (10 zones)
+2026-05-08 21:53:27,379 [INFO] >>> STEP 6: Central Evaluation & Metrics
+2026-05-08 21:53:27,380 [INFO] Starting central evaluation for Actor 1...
+2026-05-08 21:53:27,380 [INFO] === DATA LOADER v3 ===
+2026-05-08 21:53:27,414 [INFO] Loaded facts  → shape: (20650, 27)
+2026-05-08 21:53:27,450 [INFO] Loaded dim_temps → shape: (35063, 10)
+2026-05-08 21:53:27,455 [INFO] After facts ⊕ dim_temps merge → shape: (20650, 36)
+2026-05-08 21:53:27,461 [INFO] Dedup removed 18585 rows → 2065 rows remain
+2026-05-08 21:53:27,466 [INFO] Dropped 154 phantom-zone rows → 1911 rows
+2026-05-08 21:53:27,469 [INFO] Dropped 0 rows with co2_kg <= 0 → 1911 rows
+2026-05-08 21:53:27,469 [INFO] Final clean shape: (1911, 22)
+2026-05-08 21:53:27,470 [INFO] No nulls in the clean DataFrame.
+2026-05-08 21:53:27,471 [INFO] Zero counts in targets: {'co2_kg': 0, 'energie_kwh': 0, 'aqi_index': 0}
+2026-05-08 21:53:27,471 [INFO] CO2 range: [0.30, 622.51]  median=4.61
+2026-05-08 21:53:27,473 [INFO] === FEATURE ENGINEERING v3 ===
+2026-05-08 21:53:27,479 [INFO] Dropped 0 rows with 0/NaN in targets → 1911 rows
+2026-05-08 21:53:27,513 [INFO] Dropped 40 rows with missing lag-1 features → 1871 rows
+2026-05-08 21:53:27,527 [INFO] Feature engineering complete. df_reg: (1871, 42)  df_cluster: (1871, 44)  df_prophet: (1911, 23)
+2026-05-08 21:53:27,648 [INFO] [Regression] CO2   R²=0.1952  RMSE=105.4865 kg
+2026-05-08 21:53:27,649 [INFO] [Regression] Energy R²=0.7115  RMSE=20.988 kWh
+2026-05-08 21:53:27,666 [INFO] === DATA LOADER v3 ===
+2026-05-08 21:53:27,720 [INFO] Loaded facts  → shape: (20650, 27)
+2026-05-08 21:53:27,763 [INFO] Loaded dim_temps → shape: (35063, 10)
+2026-05-08 21:53:27,769 [INFO] After facts ⊕ dim_temps merge → shape: (20650, 36)
+2026-05-08 21:53:27,774 [INFO] Dedup removed 18585 rows → 2065 rows remain
+2026-05-08 21:53:27,781 [INFO] Dropped 154 phantom-zone rows → 1911 rows
+2026-05-08 21:53:27,783 [INFO] Dropped 0 rows with co2_kg <= 0 → 1911 rows
+2026-05-08 21:53:27,783 [INFO] Final clean shape: (1911, 22)
+2026-05-08 21:53:27,783 [INFO] No nulls in the clean DataFrame.
+2026-05-08 21:53:27,784 [INFO] Zero counts in targets: {'co2_kg': 0, 'energie_kwh': 0, 'aqi_index': 0}
+2026-05-08 21:53:27,784 [INFO] CO2 range: [0.30, 622.51]  median=4.61
+2026-05-08 21:53:27,790 [INFO] [Clustering] K=2  Silhouette=0.3219  Inertia=23.62
+2026-05-08 21:53:27,799 [INFO] [Prophet] AQI holdout MAE=1.9156
+2026-05-08 21:53:27,799 [INFO] === DATA LOADER v3 ===
+2026-05-08 21:53:27,837 [INFO] Loaded facts  → shape: (20650, 27)
+2026-05-08 21:53:27,873 [INFO] Loaded dim_temps → shape: (35063, 10)
+2026-05-08 21:53:27,878 [INFO] After facts ⊕ dim_temps merge → shape: (20650, 36)
+2026-05-08 21:53:27,884 [INFO] Dedup removed 18585 rows → 2065 rows remain
+2026-05-08 21:53:27,891 [INFO] Dropped 154 phantom-zone rows → 1911 rows
+2026-05-08 21:53:27,893 [INFO] Dropped 0 rows with co2_kg <= 0 → 1911 rows
+2026-05-08 21:53:27,893 [INFO] Final clean shape: (1911, 22)
+2026-05-08 21:53:27,894 [INFO] No nulls in the clean DataFrame.
+2026-05-08 21:53:27,895 [INFO] Zero counts in targets: {'co2_kg': 0, 'energie_kwh': 0, 'aqi_index': 0}
+2026-05-08 21:53:27,895 [INFO] CO2 range: [0.30, 622.51]  median=4.61
+2026-05-08 21:53:27,900 [INFO] Evaluation complete. Report saved → outputs/metrics_report.json
+2026-05-08 21:53:27,900 [INFO] >>> STEP 7: Exporting Predictions (CSV + optional DB)
+2026-05-08 21:53:27,901 [INFO] Initiating Power BI export v2...
+2026-05-08 21:53:27,909 [INFO] === DATA LOADER v3 ===
+2026-05-08 21:53:27,955 [INFO] Loaded facts  → shape: (20650, 27)
+2026-05-08 21:53:27,999 [INFO] Loaded dim_temps → shape: (35063, 10)
+2026-05-08 21:53:28,007 [INFO] After facts ⊕ dim_temps merge → shape: (20650, 36)
+2026-05-08 21:53:28,013 [INFO] Dedup removed 18585 rows → 2065 rows remain
+2026-05-08 21:53:28,020 [INFO] Dropped 154 phantom-zone rows → 1911 rows
+2026-05-08 21:53:28,023 [INFO] Dropped 0 rows with co2_kg <= 0 → 1911 rows
+2026-05-08 21:53:28,023 [INFO] Final clean shape: (1911, 22)
+2026-05-08 21:53:28,024 [INFO] No nulls in the clean DataFrame.
+2026-05-08 21:53:28,024 [INFO] Zero counts in targets: {'co2_kg': 0, 'energie_kwh': 0, 'aqi_index': 0}
+2026-05-08 21:53:28,024 [INFO] CO2 range: [0.30, 622.51]  median=4.61
+2026-05-08 21:53:28,026 [INFO] === FEATURE ENGINEERING v3 ===
+2026-05-08 21:53:28,032 [INFO] Dropped 0 rows with 0/NaN in targets → 1911 rows
+2026-05-08 21:53:28,066 [INFO] Dropped 40 rows with missing lag-1 features → 1871 rows
+2026-05-08 21:53:28,078 [INFO] Feature engineering complete. df_reg: (1871, 42)  df_cluster: (1871, 44)  df_prophet: (1911, 23)
+2026-05-08 21:53:28,111 [INFO]   ✅ regression_predictions.csv  (1871 rows)
+2026-05-08 21:53:28,111 [INFO]   Generating future-year predictions (next 24 months)...
+2026-05-08 21:53:30,038 [INFO]   ✅ future_predictions.csv  (960 rows — [2023, 2024])
+2026-05-08 21:53:30,071 [INFO]   ✅ forecast_aqi.csv  (720 rows)
+2026-05-08 21:53:30,071 [INFO]   ✅ cluster_labels.csv already exists.
+2026-05-08 21:53:30,072 [INFO] Export complete.
