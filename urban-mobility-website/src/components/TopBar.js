@@ -40,9 +40,12 @@ export default function TopBar() {
           <Users className="w-4 h-4" />
           About Us
         </button>
-        {role?.pages?.length > 1 && (
+        {role && role.defaultPageId && (
           <button
-            onClick={() => setActivePage(role.pages[1])}
+            onClick={() => {
+              const defaultPage = role.pages.find((p) => p.id === role.defaultPageId);
+              if (defaultPage) handlePageChange(defaultPage);
+            }}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-[#002d6d] hover:shadow-md transition-all text-sm font-medium"
           >
             <BarChart3 className="w-4 h-4" />

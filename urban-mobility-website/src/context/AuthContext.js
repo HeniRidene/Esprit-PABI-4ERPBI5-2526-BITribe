@@ -4,8 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from "rea
 
 /**
  * Base Power BI embed URL for the report.
- * Includes filterPaneEnabled=false and navContentPaneEnabled=false
- * to hide the native Power BI filter pane and bottom page navigation tabs.
+ * Each role may use a different pageName to land on their specific dashboard page.
  */
 const POWERBI_BASE_URL =
   "https://app.powerbi.com/reportEmbed?reportId=9e02c322-1fbe-4b2c-89fd-2c77955a6b78&autoAuth=true&ctid=604f1a96-cbe8-43f8-abbf-f8eaf5d85730&filterPaneEnabled=false&navContentPaneEnabled=false";
@@ -23,12 +22,13 @@ export const ROLES = {
     label: "General Director",
     title: "Global Executive Dashboard",
     subtitle: "Comprehensive view of all strategic indicators.",
+    defaultPageId: "pbi-overview",
     pages: [
       { id: "accueil", label: "Home", pageName: "" },
-      { id: "eco-page-1", label: "Emissions & Energy", pageName: "ReportSection1" },
-      { id: "eco-page-2", label: "Green Projects", pageName: "ReportSection2" },
-      { id: "mob-page-1", label: "Network Performance", pageName: "ReportSection3" },
-      { id: "sec-page-1", label: "Security & Maintenance", pageName: "ReportSection4" },
+      { id: "pbi-overview", label: "Overview Dashboard", pageName: "78661c74bb3bd3abc46b" },
+      { id: "eco-page-1", label: "Ecological Transition", pageName: "c9ef3470468f248ba32d" },
+      { id: "mob-page-1", label: "Mobility", pageName: "4bb3f934fd3ec06e2399" },
+      { id: "sec-page-1", label: "Security & Maintenance", pageName: "560d9909e18ae1d5c429" },
       { id: "mlops", label: "MLOps Control", pageName: "" },
       { id: "streamlit", label: "ML Predictions", pageName: "" },
     ],
@@ -38,10 +38,10 @@ export const ROLES = {
     label: "Ecological Transition",
     title: "Sustainability & Emissions Analytics",
     subtitle: "Real-time tracking of the environmental impact of transport networks.",
+    defaultPageId: "eco-page-1",
     pages: [
       { id: "accueil", label: "Home", pageName: "" },
-      { id: "eco-page-1", label: "Emissions & Energy", pageName: "ReportSection1" },
-      { id: "eco-page-2", label: "Green Projects", pageName: "ReportSection2" },
+      { id: "eco-page-1", label: "Ecological Transition", pageName: "c9ef3470468f248ba32d" },
       { id: "streamlit-actor1", label: "Eco Predictions", pageName: "", actorFilter: "actor1" },
     ],
   },
@@ -50,9 +50,10 @@ export const ROLES = {
     label: "Mobility",
     title: "Strategic Territory Overview",
     subtitle: "Real-time performance metrics for urban hubs.",
+    defaultPageId: "mob-page-1",
     pages: [
       { id: "accueil", label: "Home", pageName: "" },
-      { id: "mob-page-1", label: "Network Performance", pageName: "ReportSection3" },
+      { id: "mob-page-1", label: "Mobility", pageName: "4bb3f934fd3ec06e2399" },
       { id: "streamlit-actor2", label: "Mobility Predictions", pageName: "", actorFilter: "actor2" },
     ],
   },
@@ -61,9 +62,10 @@ export const ROLES = {
     label: "Security",
     title: "Operational Safety & Maintenance",
     subtitle: "Infrastructure health and real-time incident reports.",
+    defaultPageId: "sec-page-1",
     pages: [
       { id: "accueil", label: "Home", pageName: "" },
-      { id: "sec-page-1", label: "Security & Maintenance", pageName: "ReportSection4" },
+      { id: "sec-page-1", label: "Security & Maintenance", pageName: "560d9909e18ae1d5c429" },
       { id: "streamlit-actor3", label: "Security Predictions", pageName: "", actorFilter: "actor3" },
     ],
   },
@@ -110,7 +112,11 @@ export function AuthProvider({ children }) {
         setUser(parsed);
         const role = ROLES[parsed.role];
         if (role) {
-          setActivePage(role.pages[0]);
+          // Land on the role's default dashboard page (or first page for Director)
+          const defaultPage = role.defaultPageId
+            ? role.pages.find((p) => p.id === role.defaultPageId) || role.pages[0]
+            : role.pages[0];
+          setActivePage(defaultPage);
         }
       } catch (err) {
         console.error("Failed to parse user from localStorage", err);
@@ -165,7 +171,11 @@ export function AuthProvider({ children }) {
       setUser(userData);
       localStorage.setItem("urban_mobility_user", JSON.stringify(userData));
 
-      setActivePage(role.pages[0]);
+      // Land directly on the role's default dashboard page
+      const defaultPage = role.defaultPageId
+        ? role.pages.find((p) => p.id === role.defaultPageId) || role.pages[0]
+        : role.pages[0];
+      setActivePage(defaultPage);
       setShowLoginPrompt(false);
       setIsLoading(false);
       return true;

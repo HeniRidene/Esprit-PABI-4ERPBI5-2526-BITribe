@@ -62,9 +62,9 @@ function TopLoadingBar({ visible }) {
 
 // ── Power BI iframe with skeleton + error boundary ───────────────────────────
 const PBI_PAGE_LABELS = {
-  "eco-page-1": "Emissions & Energy",
-  "eco-page-2": "Green Projects",
-  "mob-page-1": "Network Performance",
+  "pbi-overview": "Overview Dashboard",
+  "eco-page-1": "Ecological Transition",
+  "mob-page-1": "Mobility",
   "sec-page-1": "Security & Maintenance",
 };
 

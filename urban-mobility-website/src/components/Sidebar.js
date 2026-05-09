@@ -12,8 +12,8 @@ import {
 /* Map page IDs to icons */
 const pageIcons = {
   accueil: Home,
+  "pbi-overview": LayoutDashboard,
   "eco-page-1": Leaf,
-  "eco-page-2": FolderTree,
   "mob-page-1": Bus,
   "sec-page-1": ShieldCheck,
   "mlops": Settings,
@@ -24,7 +24,7 @@ const pageIcons = {
 };
 
 /* Pages that have Power BI embeds and show load-status dots */
-const PBI_PAGE_IDS = new Set(["eco-page-1", "eco-page-2", "mob-page-1", "sec-page-1"]);
+const PBI_PAGE_IDS = new Set(["pbi-overview", "eco-page-1", "mob-page-1", "sec-page-1"]);
 
 export default function Sidebar() {
   const { user, logout, activePage, handlePageChange } = useAuth();
