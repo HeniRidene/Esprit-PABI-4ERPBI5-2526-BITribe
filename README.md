@@ -42,7 +42,8 @@ The platform is structured around specific strategic roles, each powered by dedi
 
 ### 3. Frontends
 - **Streamlit App (`streamlit_app`):** Multi-page interactive application serving dynamic ML dashboards for all actors.
-- **Next.js Hub (`urban-mobility-website`):** Central portal integrating BI dashboards, ML predictions, and MLOps controls. Built with Tailwind CSS and Material Design 3 tokens.
+- **Next.js Hub (`urban-mobility-website`):** Central portal integrating BI dashboards, ML predictions, and MLOps controls.
+-  Built with Tailwind CSS and Material Design 3 tokens.
 
 ## 📂 Repository Structure
 
